@@ -1,0 +1,85 @@
+## Reference: See exam_tips/dryruns.md for detailed dry-run examples and best practices
+## reference: https://kubernetes.io/docs/reference/kubectl/conventions/
+
+# pod name and image name must be unique
+kubectl run nginx-pod --image=nginx:alpine --dry-run=client -o yaml
+kubectl run nginx-pod --image=nginx:alpine
+
+# replace the pod with the new one
+kubectl replace --force -f nginx-alpine2.yml 
+
+kubectl run redis --image=redis:alpine --dry-run=client -o yaml -l="tier=db" > redis-alpine.yml
+kubectl run redis --image=redis:alpine --dry-run=client -l="tier=db"
+kubectl get pod redis
+kubectl describe pod redis
+
+# create a service for the pod  ## this is wrong
+kubectl create service clusterip redis-servcie --tcp=6379:6379 --dry-run=client -o yaml > redis-service.yml
+kubectl apply -f redis-service.yml
+kubectl get service redis-servcie
+kubectl describe service redis-servcie
+
+#best for creating services for a pod ## this is correct
+kubectl expose pod redis --port=6379 --name=redis-service
+kubectl get service redis-service
+kubectl describe service redis-service
+
+# create a deployment for the pod
+kubectl create deployment webapp --image=kodekloud/webapp-color --replicas=3
+kubectl get deployment webapp
+kubectl describe deployment webapp
+
+# create a pod with a custom port
+kubectl run custom-nginx --image=nginx --port=8080
+# create a service for the pod
+kubectl expose pod custom-nginx --port=8080 --name=custom-nginx-service
+kubectl get service custom-nginx-service
+kubectl describe service custom-nginx-service
+
+# create a namespace
+kubectl create namespace dev-ns
+kubectl get namespace
+kubectl describe namespace dev-ns
+
+# create a deployment in the namespace
+kubectl create deployment redis-deploy -n dev-ns --image=redis --replicas=2
+kubectl get deployment -n dev-ns
+kubectl describe deployment redis-deploy -n dev-ns
+
+# create a pod with a custom port
+kubectl run httpd --image=httpd:alpine
+kubectl expose pod httpd --name=httpd --port=80
+kubectl get service httpd
+kubectl describe service httpd
+## Better way to create a service for a pod
+kubectl run httpd --image=httpd:alpine --port=80 --expose=true
+kubectl get service httpd
+kubectl describe service httpd
+
+kubectl edit pod/awx-web-7d5c774c65-4qdh4 -n=awx
+
+kubectl get nodes
+kubectl create -f nginx.yml
+kubectl get pods
+# Why pending?
+kubectl get pods -n kube-system
+kubectl get pods -n kube-system | grep scheduler
+
+kubect replace --force -f nginx.yml
+kubectl get pods -n kube-system | grep scheduler
+
+kubectl get pods -o wide
+
+kubectl get pods --selector app=nginx
+
+kubectl get pods --selector env=dev -o wide
+kubectl get pods --selector env=dev --no-headers | wc -l
+
+kubectl get pods --selector bu=finance -o wide
+kubectl get pods --selector bu=finance --no-headers | wc -l
+
+kubectl get pod --selector env=prod,bu=finance,tier=frontend -o wide
+kubectl get pod --selector env=prod,bu=finance,tier=frontend --no-headers | wc -l
+kubectl get pod --selector env=prod,bu=finance,tier=frontend --no-headers | wc -l
+
+kubectl apply -f replicaset-definition-1.yaml 
