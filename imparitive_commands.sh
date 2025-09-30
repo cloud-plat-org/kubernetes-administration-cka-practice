@@ -83,3 +83,47 @@ kubectl get pod --selector env=prod,bu=finance,tier=frontend --no-headers | wc -
 kubectl get pod --selector env=prod,bu=finance,tier=frontend --no-headers | wc -l
 
 kubectl apply -f replicaset-definition-1.yaml 
+
+kubectl describe node minikube | grep Taint
+# Taints:             <none>
+
+#  reference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+kubectl taint nodes node-name key=value:PreferNoSchedule
+kubectl taint nodes node-name key=value:NoSchedule
+kubectl taint nodes node-name key=value:NoExecute
+kubectl describe node node-name | grep Taint
+kubectl taint nodes note1 app=myapp:NoSchedule
+
+kubectl get nodes --all-namespaces
+kubectl describe nodes node01 | grep Taint
+# add the taint to the node
+kubectl taint nodes node01 spray=mortein:NoSchedule
+
+kubectl run bee --image=nginx --dry-run=client -o yaml > bee.yml
+kubectl apply -f bee.yml
+kubectl get pod bee -o wide
+kubectl get pods --watch  # watch the pod bee ?
+
+# remove the taint -
+kubectl taint node controlplane node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl get pod mosquito -o wide
+
+#label the node
+kubectl label nodes node01 size=Large
+kubectl get nodes --show-labels
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
