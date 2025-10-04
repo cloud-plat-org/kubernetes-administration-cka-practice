@@ -112,7 +112,19 @@ kubectl get pod mosquito -o wide
 kubectl label nodes node01 size=Large
 kubectl get nodes --show-labels
 
+# Cluserter info
+kubectl cluster-info
+kubectl get nodes -o wide
 
+kubectl delete deployment blue
+kubectl delete deployment blue -n <namespace-name>
+kubectl delete deployment blue --force --grace-period=0
+
+kubectl delete <resource-type> <resource-name> -n <namespace-name>
+
+kubectl label nodes node01 color=blue
+kubectl get nodes --show-labels
+kubectl get nodes node01 --show-labels
 
 
 
