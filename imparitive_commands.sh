@@ -126,12 +126,14 @@ kubectl label nodes node01 color=blue
 kubectl get nodes --show-labels
 kubectl get nodes node01 --show-labels
 
-ubectl get daemonset -n cluster --all-namespaces
+kubectl get daemonset -n cluster --all-namespaces
 kubectl describe daemonset -n kube-system # look in namespace for describe?
 kubectl describe daemonsets kube-proxy -n kube-system # not this is correct
+kubectl describe ds kube-flannel-ds -n kube-system
 kubectl create -f daemon-set-definition.yml
-kubectl get daemonset -n kube-system
-kubectl describe daemonset
+kubectl create deployment elasticsearch --image=k8s.gcr.io/fluentd-elasticsearch:v2.5.2 -n kube-system -o yaml > elasticsearch.yml
+# Convert output to type daemonset
+
 
 
 
