@@ -126,9 +126,12 @@ kubectl label nodes node01 color=blue
 kubectl get nodes --show-labels
 kubectl get nodes node01 --show-labels
 
-kubectl get daemonset
-kubectl describe daemonset
+ubectl get daemonset -n cluster --all-namespaces
+kubectl describe daemonset -n kube-system # look in namespace for describe?
+kubectl describe daemonsets kube-proxy -n kube-system # not this is correct
 kubectl create -f daemon-set-definition.yml
+kubectl get daemonset -n kube-system
+kubectl describe daemonset
 
 
 
