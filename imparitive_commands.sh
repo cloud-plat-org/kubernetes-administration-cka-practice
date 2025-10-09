@@ -131,14 +131,32 @@ kubectl describe daemonset -n kube-system # look in namespace for describe?
 kubectl describe daemonsets kube-proxy -n kube-system # not this is correct
 kubectl describe ds kube-flannel-ds -n kube-system
 kubectl create -f daemon-set-definition.yml
-kubectl create deployment elasticsearch --image=k8s.gcr.io/fluentd-elasticsearch:v2.5.2 -n kube-system -o yaml > elasticsearch.yml
+kubectl create deployment elasticsearch --image=k8s.gcr.io/fluentd-elasticsearch:v2.5.2 -n kube-system -o yaml > daemonset-elasticsearch.yml
 # Convert output to type daemonset
+kubectl create -f daemonset-elasticsearch.yml
+kubectl get daemonset -n kube-system
+kubectl delete daemonset elasticsearch -n kube-system
+
+## Static Pods
+# only the command can be after the --command flag
+kubectl run static-busybox \
+  --image=busybox \
+  --restart=Never \
+  --namespace=default \
+  --dry-run=client -o yaml \
+  --command -- sleep 1000
+ls /etc/kubernetes/manifests
 
 
+kubectl get pod static-busybox -n default -o yaml
+kubectl get pods -A --watch
+# look up owner references for pod if static pod node, -replicaSet if replicaset pod
+# The node name at the end of the pod name if static pod
+cat /var/lib/kubelet/config.yaml
+staticPodPath: /etc/kubernetes/manifests # this is the path for static pods?
 
-
-
-
+kubectl exec -it <pod-name> -- <command>
+kubectl exec -it node01 -- ls -al /etc/kubernetes/manifests
 
 
 
