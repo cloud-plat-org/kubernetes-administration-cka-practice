@@ -1,0 +1,8 @@
+version: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+- schedulerName: custom-scheduler
+leadershipElection:
+  leaderElect: true
+  resourceNamespace: kube-system
+  resourceName: lock-object-custom-scheduler

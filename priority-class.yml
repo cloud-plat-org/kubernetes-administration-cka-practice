@@ -1,0 +1,10 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: medium-priority
+value: 1000000000
+description: Medium priority class
+preemptionPolicy: PreemptLowerPriority # Never, PreemptLowerPriority, PreemptAny
+globalDefault: false
+# globalDefault: true # Only one PriorityClass can be marked as global default
+kubectl get pods -o custom-columns="NAME:.metadata.name,PRIORITY:.spec.priorityClassName"

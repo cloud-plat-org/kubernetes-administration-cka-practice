@@ -158,6 +158,27 @@ staticPodPath: /etc/kubernetes/manifests # this is the path for static pods?
 kubectl exec -it <pod-name> -- <command>
 kubectl exec -it node01 -- ls -al /etc/kubernetes/manifests
 
+# Priority Class
+kubectl get priorityclass
+kubectl get priorityclass system-cluster-critical -o yaml
+kubectl describe priorityclass system-cluster-critical
+kubectl describe priorityclass system-node-critical -o yaml
+kubectl delete priorityclass high-priority
+
+# https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/
+## custom-scheduler.yml, scheduler-config.yml, custom-scheduler-pod.yml
+kubectl get pods -n kube-system | grep scheduler
+kubectl get pods -n kube-system | grep custom-scheduler
+kubectl get events -n kube-system -o wide 
+    --sort-by='.metadata.creationTimestamp'
+kubectl get serviceaccount -n kube-system
+kubectl get clusterrolebinding
+kubectl describe pod kube-scheduler-controlplane --namespace=kube-system
+kubectl get serviceaccount kube-scheduler -n kube-system -o yaml # serviceaccount or sa
+kubectl get clusterrolebinding kube-scheduler -o yaml
+kubectl create configmap custom-scheduler-config --from-file=scheduler-config.yml -n kube-system
+# use same image as the default scheduler
+
 
 
 
