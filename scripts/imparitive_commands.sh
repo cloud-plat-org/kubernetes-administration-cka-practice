@@ -179,11 +179,11 @@ kubectl get clusterrolebinding kube-scheduler -o yaml
 kubectl create configmap custom-scheduler-config --from-file=scheduler-config.yml -n kube-system
 # use same image as the default scheduler
 
-kube-apiserver -h
-which kube-apiserver
-   minikube ssh
-   # Then inside the node:
-   kube-apiserver -h
+# Access kube-apiserver help in minikube (runs as a container, not a binary)
+kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h
+# Or check specific options/flags:
+kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
+# apiserver-enable-admission-plugins.md
 
 
 
