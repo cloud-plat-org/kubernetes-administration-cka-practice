@@ -244,7 +244,67 @@ kubectl apply -f yml/webhook-MutatingWebhookConfiguration.yml
 
 # verify the security context of the pod
 kubectl create ns webhook-demo
-kubectl edit pod pod-with-conflict
+kubectl get ns
+kubectl edit pod pod-with-
+kubectl get pod pod-with-defaults -n webhook-demo -o yaml grep -A 5 securityContext
+
+kubectl create secret tls webhook-server-tls -n webhook-demo \
+    --cert "/root/keys/webhook-server-tls.crt" \
+    --key "/root/keys/webhook-server-tls.key"
+
+kubectl get secret webhook-server-tls -n webhook-demo
+
+# https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/
+# https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/
+# https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/
+
+# Open Source:
+#   Metrics Server
+#   Prometheus
+#   Elastic Stack
+    # Heapster - deprecated
+# Paid:
+#   Datadog
+#   Dynatrace
+
+Metrics Server
+# https://github.com/kubernetes-sigs/metrics-server
+    cAdvisor
+    kubelet
+minikube addons enable metrics-server
+git clone https://github.com/kubernetes-sigs/metrics-server.git
+cd metrics-server
+kubectl apply -f deploy/1.8+
+
+kubectl get pods -n kube-system | grep metrics-server
+kubectl get pods -n kube-system | grep elasticsearch
+kubectl get pods -n kubernetes-dashboard | grep dashboard
+elasticsearch-9dbfb9475-ptmwg -n kube-system
+metrics-server-85b7d694d7-nmh7h -n kube-system
+dashboard-metrics-scraper-77bf4d6c4c-qqvmn -n kubernetes-dashboard
+kubernetes-dashboard-855c9754f9-rhq6t -n kubernetes-dashboard
+
+kubectl top node
+kubectl top pod -A
+# NAME       CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+# minikube   148m         1%       981Mi           26%     
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+docker run kodekloud/event-simulator:1.0
+ kubectl apply -f yml/event-simulator.yml
+ kubectl logs event-simulator-pod
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
