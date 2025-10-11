@@ -185,5 +185,14 @@ kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h
 kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
 # apiserver-enable-admission-plugins.md
 
+kube-apiserver.service
+# --enable-admission-plugins=NodeRestriction,NamespaceAutoProvision
+# yml/kube-apiserver.yaml
+# /etc/kubernetes/manifests/kube-apiserver.yaml
+
+
+
+
+
 
 

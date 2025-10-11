@@ -1,4 +1,8 @@
 Great! I can see you successfully used the command to find information about admission plugins. This is excellent CKA exam prep material!
+```bash
+kube-apiserver -h | grep enable-admission-plugins
+# for minikube see below.
+```
 
 **Key things to note from the output:**
 
