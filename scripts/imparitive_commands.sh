@@ -179,9 +179,11 @@ kubectl get clusterrolebinding kube-scheduler -o yaml
 kubectl create configmap custom-scheduler-config --from-file=scheduler-config.yml -n kube-system
 # use same image as the default scheduler
 
-
-
-
+kube-apiserver -h
+which kube-apiserver
+   minikube ssh
+   # Then inside the node:
+   kube-apiserver -h
 
 
 
