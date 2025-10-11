@@ -179,20 +179,72 @@ kubectl get clusterrolebinding kube-scheduler -o yaml
 kubectl create configmap custom-scheduler-config --from-file=scheduler-config.yml -n kube-system
 # use same image as the default scheduler
 
+
+## Viewing Enable Admission Controllers (usage)
 # Access kube-apiserver help in minikube (runs as a container, not a binary)
 kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h
 # Or check specific options/flags:
 kubectl exec kube-apiserver-minikube -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
 # apiserver-enable-admission-plugins.md
-
+## How to enable creating namespaces automatically
 kube-apiserver.service
-# --enable-admission-plugins=NodeRestriction,NamespaceAutoProvision
+# --enable-admission-plugins=NodeRestriction,NamespaceAutoProvision # deprecated
+# Please be aware that the NamespaceExists and NamespaceAutoProvision admission controllers have been deprecated and
+# are now succeeded by the NamespaceLifecycle admission controller.
+# The NamespaceLifecycle admission controller ensures that any requests made to a non-existent namespace are rejected, 
+# and it safeguards the default namespaces, including default, kube-system, and kube-public, from being deleted.
+# --disable-adminsion-plugins= DefaultStorageCass
 # yml/kube-apiserver.yaml
 # /etc/kubernetes/manifests/kube-apiserver.yaml
+kubectl exec -it kube-apiserver-minikube -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
+grep -i enable-admission-plugins /etc/kubernetes/manifests/kube-apiserver.yaml
+## mutating admission controller vs validating admission controller
+<--- apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 0.5Gi
+      --->
+  # pvc (persistent volume claim)
+kubectl get pvc myclaim -o yaml
+# Since the kube-apiserver is running as pod you can check the process to see enabled and disabled plugins.
+ps -ef | grep kube-apiserver | grep admission-plugins
 
+## Admission Controller (validating and mutating)
+# AllwaysPullImages
+# DefaultStorageClass
+# EventRateLimit
+# NamespaceAutoProvision - mutating
+# NamespaceExists - validating
+# NamespaceLifecycle
+# NodeRestriction
+#  Many more...
 
+# ValidatingAdmissionWebhook - validating
+# MutatingAdmissionWebhook - mutating
+# ValidatingAdmissionPolicy - validating
+# MutatingAdmissionPolicy - mutating
 
+https://github.com/kubernetes/kubernetes/blob/v1.13.0/test/images/webhook/main.go
 
+kubectl create namespace webhook-demo
+kubectl -n webhook-demo create secret tls webhook-server-tls \
+    --cert "/root/keys/webhook-server-tls.crt" \
+    --key "/root/keys/webhook-server-tls.key"
+
+kubectl apply -f yml/webhook-deployment.yml
+kubectl apply -f yml/webhook-service.yml
+kubectl apply -f yml/webhook-MutatingWebhookConfiguration.yml
+
+# verify the security context of the pod
+kubectl create ns webhook-demo
+kubectl edit pod pod-with-conflict
 
 
 
