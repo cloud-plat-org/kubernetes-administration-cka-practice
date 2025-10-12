@@ -321,10 +321,43 @@ kubectl apply -f yml/simple_deployment.yml
 kubectl set image deployment/nginx-deployment nginx=nginx:1.14.2
 kubectl describe deployment nginx-deployment
 
+kubectl rollback undo deployment nginx-deployment
+kubectl get replicasets
 
+alias k="kubectl"
+echo "alias k='kubectl'" >> ~/.bashrc
+source ~/.bashrc
 
+k describe deploy frontend
+k set image deploy frontend <container-name>=<image-name>
 
+# Configure Applications
+# Configuring applications comprises of understanding the following concepts:
+# Configuring Command and Arguments on applications
+# Configuring Environment Variables
+# Configuring Secrets
 
+docker run ubuntu
+docker ps
+docker ps -a
+docker rm <container-id>
+docker run ubuntu sleep 5
+From: ubuntu
+CMD: sleep 5
+# Create the Dockerfile
+cat > Dockerfile << EOF
+FROM ubuntu
+CMD ["sleep", "5"]
+EOF
+docker bulid -t ubuntu-sleep .
+docker run ubuntu-sleep
+From: ubuntu
+ENTRYPOINT: ["sleep"]
+CMD: ["5"] # default command
+docker run ubuntu-sleep 10
+docker --entrypoint sleep2.0 ubuntu-sleep 10
+# CMD command parameter1
+# CMD ["sleep", "5"] - First is command, rest are parameters  
 
 
 
