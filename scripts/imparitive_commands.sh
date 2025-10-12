@@ -293,6 +293,33 @@ docker run kodekloud/event-simulator:1.0
  kubectl apply -f yml/event-simulator.yml
  kubectl logs event-simulator-pod
 
+## Roleout and Versioning
+kubectl create deployment nginx --image=nginx
+kubectl rollout status deployment nginx
+
+# For coredns (in kube-system namespace)
+kubectl rollout status deployment coredns -n kube-system
+kubectl rollout history deployment coredns -n kube-system
+
+# For metrics-server (in kube-system namespace)
+kubectl rollout status deployment metrics-server -n kube-system
+kubectl rollout history deployment metrics-server -n kube-system
+
+# For elasticsearch (in kube-system namespace)
+kubectl rollout status deployment elasticsearch -n kube-system
+kubectl rollout history deployment elasticsearch -n kube-system
+
+# For dashboard deployments (in kubernetes-dashboard namespace)
+kubectl rollout status deployment kubernetes-dashboard -n kubernetes-dashboard
+kubectl rollout status deployment dashboard-metrics-scraper -n kubernetes-dashboard
+# rollout strategy
+# RollingUpdate - default
+# Recreate -not preferred
+
+kubectl apply -f yml/simple_deployment.yml
+# note perfered, now simple_deployment.yml will be outdated.
+kubectl set image deployment/nginx-deployment nginx=nginx:1.14.2
+kubectl describe deployment nginx-deployment
 
 
 
@@ -303,8 +330,3 @@ docker run kodekloud/event-simulator:1.0
 
 
 
-
-
-
-
- 
