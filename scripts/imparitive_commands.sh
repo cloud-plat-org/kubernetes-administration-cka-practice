@@ -358,6 +358,31 @@ docker run ubuntu-sleep 10
 docker --entrypoint sleep2.0 ubuntu-sleep 10
 # CMD command parameter1
 # CMD ["sleep", "5"] - First is command, rest are parameters  
+docker run --name ubuntu-sleep ubuntu-sleep 10
+
+cat > pod-definition.yml << EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-sleeper-pod
+spec:
+  containers:
+  - name: ubuntu-sleeper
+    image: ubuntu-sleeper # ubuntu 
+    command: ["sleep2.0"]
+    args: ["10"]
+EOF
+docker run --name ubuntu-sleeper \
+     --entrypoint sleep2.0
+
+kubectl run ubuntu-sleeper --image=ubuntu-sleeper --command -- sleep 10
+
+kubectl run webapp-gree \
+  --image=kodekloud/webapp-color:v2 \
+  --command python app.py -- --color green
+
+
+
 
 
 
