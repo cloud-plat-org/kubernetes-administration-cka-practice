@@ -15,6 +15,9 @@ spec:
       limits:
         memory: "2Gi"
         cpu: 3
+    env:
+    - name: NAME
+      value: "Nginx"
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}

@@ -381,7 +381,26 @@ kubectl run webapp-gree \
   --image=kodekloud/webapp-color:v2 \
   --command python app.py -- --color green
 
+## Environment Variables
+#
+# Plain Key Value Pairs
+# ConfigMaps
+# Secrets
 
+docker run -e NAME=Nginx
+kubectl create configmap app-config \
+  --from-literal=NAME=Nginx \
+  --from-literal=COLOR=blue
+kubectl get configmap app-config -o yaml
+kubectl create configmap app-config \
+  --from-file=app-config.properties
+kubectl get configmap app-config -o yaml
+# Declaritive:
+kubectl create -f yml/config-map.yml
+
+yml/app-config.yml
+kubectl describe configmap app-config
+kubectl delete configmap app-config
 
 
 
