@@ -398,7 +398,6 @@ kubectl get configmap app-config -o yaml
 # Declaritive:
 kubectl create -f yml/config-map.yml
 
-yml/app-config.yml
 kubectl describe configmap app-config
 kubectl delete configmap app-config
 
