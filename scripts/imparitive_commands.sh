@@ -401,6 +401,16 @@ kubectl create -f yml/config-map.yml
 kubectl describe configmap app-config
 kubectl delete configmap app-config
 
+# app-config
+APP_COLOR: blue
+APP_MODE: prod
+# mysql-config
+port: 3306
+max_allowed_packet: 128M
+# redis-config
+port: 6379
+rdb_compression: yes
+
 
 
 
