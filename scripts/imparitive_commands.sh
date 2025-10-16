@@ -386,20 +386,21 @@ kubectl run webapp-gree \
 # Plain Key Value Pairs
 # ConfigMaps
 # Secrets
+# https://kubernetes.io/docs/concepts/configuration/configmap/
 
 docker run -e NAME=Nginx
 kubectl create configmap app-config \
   --from-literal=NAME=Nginx \
   --from-literal=COLOR=blue
-kubectl get configmap app-config -o yaml
+kubectl get cm app-config -o yaml
 kubectl create configmap app-config \
   --from-file=app-config.properties
-kubectl get configmap app-config -o yaml
+kubectl get configmaps
 # Declaritive:
 kubectl create -f yml/config-map.yml
 
-kubectl describe configmap app-config
-kubectl delete configmap app-config
+kubectl describe cm app-config
+kubectl delete cm app-config
 
 # app-config
 APP_COLOR: blue
@@ -411,13 +412,19 @@ max_allowed_packet: 128M
 port: 6379
 rdb_compression: yes
 
+kubectl run webapp-color \
+  --image=busybox \
+  --restart=Never \
+  --labels=name=webapp-color \
+  --env=APP_COLOR=green \
+  -o yaml --dry-run=client
 
-
-
-
-
-
-
+kubectl create configmap webapp-config-map --from-literal=AP
+P_COLOR=darkblue --from-literal=APP_OTHER=disregarded -o yaml
+#  yml/configmap-webcolor.yml notes
+kubectl edit pod webapp-color
+# Make changes when fails, get path to edited file.
+kubectl replace --force -f /tmp/kubectl-edit-webapp-color.yaml
 
 
 

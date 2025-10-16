@@ -18,6 +18,10 @@ spec:
     env:
     - name: NAME
       value: "Nginx"
+    # or 
+    envFrom:
+    - configMapRef:
+        name: app-config
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
