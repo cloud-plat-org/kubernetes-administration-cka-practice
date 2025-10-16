@@ -426,9 +426,17 @@ kubectl edit pod webapp-color
 # Make changes when fails, get path to edited file.
 kubectl replace --force -f /tmp/kubectl-edit-webapp-color.yaml
 
+##### SECRETS #####
 
+kubectl create secret generic db-user-pass \
+  --from-literal=username=admin \
+  --from-literal=password=123456
+kubectl get secret db-user-pass
+kubectl get secret db-user-pass -o yaml
+kubectl describe secret db-user-pass
+kubectl delete secret db-user-pass
 
-
+kubectl create secret generic db-user-pass --from-literal=username=admin --from-literal=password=123456 -o yaml > db-user-pass.yml
 
 
 
