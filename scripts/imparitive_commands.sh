@@ -465,7 +465,9 @@ helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver
 kubectl get pods -n kube-system | grep secrets-store-csi-driver
 #  https://www.youtube.com/watch?v=MTnQW9MxnRI
 
-
+##### ENCRYPT DATA ETCD CLUSTER #####
+# https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+app-get install etcd-client
 
 
 
