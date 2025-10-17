@@ -461,6 +461,10 @@ k create secret generic db-secret --from-literal=DB_Host=sql01 --from-literal DB
 #     https://github.com/kubernetes-sigs/secrets-store-csi-driver-provider-minikube
 
 kubectl get secretproviderclass
+helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver
+kubectl get pods -n kube-system | grep secrets-store-csi-driver
+#  https://www.youtube.com/watch?v=MTnQW9MxnRI
+
 
 
 
