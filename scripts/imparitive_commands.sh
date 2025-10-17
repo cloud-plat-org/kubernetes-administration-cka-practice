@@ -467,8 +467,6 @@ kubectl get pods -n kube-system | grep secrets-store-csi-driver
 
 ##### ENCRYPT DATA ETCD CLUSTER #####
 # https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
-app-get install etcd-client
-
 
 
 
