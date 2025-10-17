@@ -437,6 +437,31 @@ kubectl describe secret db-user-pass
 kubectl delete secret db-user-pass
 
 kubectl create secret generic db-user-pass --from-literal=username=admin --from-literal=password=123456 -o yaml > db-user-pass.yml
+alias k=kubectl
+k create secret generic db-secret --from-literal=DB_Host=sql01 --from-literal DB_User=root --from-literal DB_Password=password123 --dry-run=client -o yaml
+# apiVersion: v1
+# data:
+#   DB_Host: c3FsMDE=
+#   DB_Password: cGFzc3dvcmQxMjM=
+#   DB_User: cm9vdA==
+# kind: Secret
+# metadata:
+#   creationTimestamp: null
+#   name: db-secret
+
+# External Secrets Operator
+# https://external-secrets.io/
+# Sealed Secrets
+# https://github.com/bitnami-labs/sealed-secrets
+# Secrets Store CSI Driver
+# https://secrets-store-csi-driver.sigs.k8s.io/
+#     aws provider for secrets store csi driver
+#     https://github.com/aws/secrets-store-csi-driver-provider-aws
+# Provider minikube for secrets store csi driver
+#     https://github.com/kubernetes-sigs/secrets-store-csi-driver-provider-minikube
+
+kubectl get secretproviderclass
+
 
 
 
