@@ -486,4 +486,5 @@ kubectl get pod -n kube-system kube-apiserver-minikube -o yaml | grep encryption
 # in /etc/kubernetes/manifests/kube-apiserver.yaml
 # then restart the kube-apiserver pod
 
-
+# Multi-Container Pods
+kubectl -n elastic-stack exec -it app -- cat /log/app.log

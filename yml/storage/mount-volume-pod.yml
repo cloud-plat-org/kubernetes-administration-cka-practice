@@ -1,0 +1,22 @@
+app
+kind: Pod
+metadata:
+  name: mount-volume-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: html-volume
+          mountPath: /var/www/html
+    - name: busybox
+      image: busybox
+      command: ["sleep", "infinity"]
+      volumeMounts:
+        - name: log-volume
+          mountPath: /var/log/app.log
+  volumes:
+    - name: html-volume
+      emptyDir: {}
+    - name: log-volume
+      emptyDir: {}
