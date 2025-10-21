@@ -195,6 +195,7 @@ kube-apiserver.service
 # and it safeguards the default namespaces, including default, kube-system, and kube-public, from being deleted.
 # --disable-adminsion-plugins= DefaultStorageCass
 # yml/kube-apiserver.yaml
+
 # /etc/kubernetes/manifests/kube-apiserver.yaml
 kubectl exec -it kube-apiserver-minikube -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
 grep -i enable-admission-plugins /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -467,7 +468,22 @@ kubectl get pods -n kube-system | grep secrets-store-csi-driver
 
 ##### ENCRYPT DATA ETCD CLUSTER #####
 # https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+# Includes list of providers for encryption:
+# - aescbc
+# - kms
+# - secretbox
+# - identity
 
+/etc/kubernetes/manifests/kube-apiserver.yaml
+grep encryption-provider-config /etc/kubernetes/manifests/kube-apiserver.yaml
 
+kubectl describe pod -n kube-system kube-apiserver-minikube | grep encryption-provider-config
+kubectl get pod -n kube-system kube-apiserver-minikube -o yaml | grep encryption-provider-config
+--encryption-provider-config
+
+# add encryption-configuration.yml to 
+# --encryption-provider-config=encryption-configuration.yml
+# in /etc/kubernetes/manifests/kube-apiserver.yaml
+# then restart the kube-apiserver pod
 
 
