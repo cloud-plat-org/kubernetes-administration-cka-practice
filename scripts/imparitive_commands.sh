@@ -488,3 +488,19 @@ kubectl get pod -n kube-system kube-apiserver-minikube -o yaml | grep encryption
 
 # Multi-Container Pods
 kubectl -n elastic-stack exec -it app -- cat /log/app.log
+
+k logs -c <container-name> <pod-name>
+kubectl -n elastic-stack logs kibana
+k logs app
+
+
+
+
+
+
+
+
+
+
+
+
