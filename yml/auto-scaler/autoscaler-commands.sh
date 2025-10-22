@@ -31,8 +31,11 @@ kubectl create -f my-app-hpa.yml
 # Custom adapter and metrics are supported by the HPA.
 # External adapters and metrics are supported by the HPA.
 # Dynatrace, Datadog, Prometheus, etc.
+k get hpa --watch
 
-
+# Inplace Pod Resizing
+kubectl replace -f inplace-pod-resizing.yml
+k edit pod inplace-pod-resizing
 
 
 
