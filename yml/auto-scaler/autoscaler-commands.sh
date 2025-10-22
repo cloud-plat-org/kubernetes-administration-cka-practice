@@ -33,7 +33,7 @@ kubectl create -f my-app-hpa.yml
 # Dynatrace, Datadog, Prometheus, etc.
 k get hpa --watch
 
-# Inplace Pod Resizing
+# Inplace Pod Resizing (manual scaling)
 kubectl replace -f inplace-pod-resizing.yml
 k edit pod inplace-pod-resizing
 # https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/
@@ -41,11 +41,20 @@ kubectl patch pod resize-demo --subresource resize --patch \
   '{"spec":{"containers":[{"name":"pause", "resources":{"requests":{"cpu":"800m"}, "limits":{"cpu":"800m"}}}]}}'
 
 # Alternative methods:
-# kubectl -n qos-example edit pod resize-demo --subresource resize
-# kubectl -n qos-example apply -f <updated-manifest> --subresource resize --server-side
+# FEATURE_GATES=InPlacePodVerticalScaling=true 
+#   kubectl replace -f <updated-manifest> --subresource resize --server-side
+# only works for cpu and memory.
+# INIT containers and ephemeral containers can't be resized.
+# Resizing a pod will not change the pod's QOS class.
+# Resource requests and limits can't be moved once set.
+# A containers memory limit can not be less than the previous request.
 
-
-
+# Resize Policy
+kubectl create -f resize-policy-deployment.yml
+kubectl replace -f resize-policy-deployment.yml
+kubectl edit deployment resize-policy-deployment
+kubectl patch deployment resize-policy-deployment --subresource resize --patch \
+  '{"spec":{"template":{"spec":{"containers":[{"name":"my-app", "resources":{"requests":{"cpu":"800m"}, "limits":{"cpu":"800m"}}}]}}}}'
 
 
 
