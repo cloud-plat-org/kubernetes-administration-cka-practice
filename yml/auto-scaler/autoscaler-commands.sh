@@ -36,7 +36,13 @@ k get hpa --watch
 # Inplace Pod Resizing
 kubectl replace -f inplace-pod-resizing.yml
 k edit pod inplace-pod-resizing
+# https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/
+kubectl patch pod resize-demo --subresource resize --patch \
+  '{"spec":{"containers":[{"name":"pause", "resources":{"requests":{"cpu":"800m"}, "limits":{"cpu":"800m"}}}]}}'
 
+# Alternative methods:
+# kubectl -n qos-example edit pod resize-demo --subresource resize
+# kubectl -n qos-example apply -f <updated-manifest> --subresource resize --server-side
 
 
 
