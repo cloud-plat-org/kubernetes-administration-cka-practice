@@ -48,6 +48,7 @@ kubectl patch pod resize-demo --subresource resize --patch \
 # Resizing a pod will not change the pod's QOS class.
 # Resource requests and limits can't be moved once set.
 # A containers memory limit can not be less than the previous request.
+# Windows pods can't be resized.
 
 # Resize Policy
 kubectl create -f resize-policy-deployment.yml
@@ -55,6 +56,50 @@ kubectl replace -f resize-policy-deployment.yml
 kubectl edit deployment resize-policy-deployment
 kubectl patch deployment resize-policy-deployment --subresource resize --patch \
   '{"spec":{"template":{"spec":{"containers":[{"name":"my-app", "resources":{"requests":{"cpu":"800m"}, "limits":{"cpu":"800m"}}}]}}}}'
+
+
+
+# VPA Commands
+# Maual # requires Metrics Server
+kubectl top pod <pod-name> <container-name>
+# See utilisation metrics for the pod and container.
+
+# if changes:
+kubectl edit pod <pod-name>
+kubectl replace --force -f <pod-name>.yml
+# --force will delete the pod and create a new one with the new changes.
+
+# VPA - automatically scale the resources of a pod based on the metrics.
+#     - based on the metrics, the VPA will add or remove resources to the pod.
+#     - meaning it it gives more memory or cpu to the pod if it is overloaded.
+#     - the VPA will balance the load across the resources.
+# VPA does not come built in with kubernetes.
+# You need to install it.
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/deploy/vpa-recommended.yaml
+# vpa-admission-controller.yaml creates new pods with the recommended resources.
+# vpa-recommender.yaml Monitors the metrics server and recommends the resources to the pod.
+# vpa-updater.yaml Evicts the pod if the resources are not enough.
+
+kubectl get vpa --watch
+kubectl get vpa <vpa-name>
+kubectl delete vpa <vpa-name>
+kubectl describe vpa <vpa-name>
+
+# Feature						VPA (Vertical Scaling)								HPA (Vertical Scaling)
+# Scaling Method				Increase CPU and memory of existing Pods			Adds/Removed Pods based on load
+
+# Pod Behvior					Restarts Pods to apply new resources values			Keeps existing Pods running
+
+# Handles Traffic Spikes?		No, because scaling requires a Pod restart			Yes, instanty adds more Pods
+
+# Optimized Costs?				Prevents over-provisioning of CPU/memory			Avoids unnecerrary idle Pods
+
+# Best For						Stateful workloads, CPU/memory-heavy-apps			Web apps, microservices, stateless services
+# 								(DB, ML workloads)
+
+
+
+
 
 
 

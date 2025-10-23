@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  updatePolicy:
+    updateMode: Auto # Auto, Off, Initial, Recreate
+  resourcePolicy:
+    containerPolicies:
+      - containerName: my-app
+        minAllowed:
+          cpu: 100m
+          memory: 100Mi
+        maxAllowed:
+          cpu: 200m
+          memory: 200Mi
+        controlledResources:
+          - cpu
+          - memory
