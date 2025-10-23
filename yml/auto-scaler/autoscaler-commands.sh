@@ -97,6 +97,10 @@ kubectl describe vpa <vpa-name>
 # Best For						Stateful workloads, CPU/memory-heavy-apps			Web apps, microservices, stateless services
 # 								(DB, ML workloads)
 
+# Example use cases:            DB, (mysql, postgres, etc.) JVM based apps          Web services (NGINX, API services) Message queues (RabbitMQ, Kafka)
+#                               AI, ML, (tensorflow, pytorch, etc.)                 microservices, stateless services
+
+
 
 
 
