@@ -76,9 +76,9 @@ kubectl replace --force -f <pod-name>.yml
 # VPA does not come built in with kubernetes.
 # You need to install it.
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/vertical-pod-autoscaler/deploy/vpa-recommended.yaml
-# vpa-admission-controller.yaml creates new pods with the recommended resources.
-# vpa-recommender.yaml Monitors the metrics server and recommends the resources to the pod.
-# vpa-updater.yaml Evicts the pod if the resources are not enough.
+### vpa-admission-controller.yaml creates new pods with the recommended resources.
+### vpa-recommender.yaml Monitors the metrics server and recommends the resources to the pod.
+### vpa-updater.yaml Evicts the pod if the resources are not enough.
 
 kubectl get vpa --watch
 kubectl get vpa <vpa-name>
@@ -123,6 +123,8 @@ kubectl get deployments -n kube-system | grep vpa
 k logs vpa-admission-controller-76f55f79cc-qq8xq -n kube-system | grep -C 2 "pattern" filename
 k logs vpa-recommender-588485c64b-67xmj -n kube-system | grep -B 2 -A 2 "pattern" filename
 k logs vpa-updater-75d58448cf-rcpwr -n kube-system | grep -C 2 "pattern" filename
+# "Too few replicas" error means the VPA is not able to scale the pod. More that one pod is required.
+
 kubectl logs $(kubectl get pods -n kube-system --no-headers -o custom-columns=":metadata.name" | grep vpa-updater) -n kube-system
 # pods_eviction_restriction.go:226] too few replicas for ReplicaSet default/flask-app-b6c9c4f78. Found 1 live pods, needs 2 (global 2)
 
@@ -134,6 +136,7 @@ kubectl get deployment flask-app -o wide
 # make sure 2 pods are running
 
 kubectl get pods -l app=flask-app
+# label is app=flask-app
 # NAME                         READY   STATUS    RESTARTS   AGE
 # flask-app-67b666c5fc-jrc9d   1/1     Running   0          77s
 # flask-app-67b666c5fc-rvt9d   1/1     Running   0          62s
@@ -142,6 +145,25 @@ kubectl describe vpa flask-app
 # See recommendations applied CPU and memory, and logs for the VPA.
 
 
+## VPA CPU Optimization Lab ##
+ k apply -f vpa-cpu-testing.yml
+ k top pod
+# NAME                           CPU(cores)   MEMORY(bytes)   
+# flask-app-4-7dcd9549fc-cs2dj   1m           19Mi            
+# flask-app-4-7dcd9549fc-q7cl5   1m           19Mi   
+
+k apply -f vpa-cpu.yml 
+# verticalpodautoscaler.autoscaling.k8s.io/flask-app created
+k get vpa
+# NAME        MODE   CPU    MEM   PROVIDED   AGE
+# flask-app   Off    100m         True       59s
+./load.sh
+# keep the load running in the background.
+# You can terminate the load by pressing Ctrl+C.
+k get vpa
+
+
+## kubernetes-CKA-0500-Cluster+Maintenance-v1.2.pdf ##
 
 
 
@@ -149,30 +171,17 @@ kubectl describe vpa flask-app
 
 
 
-#  kubectl apply -f /root/vpa-crds.yml
-# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalercheckpoints.autoscaling.k8s.io created
-# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalers.autoscaling.k8s.io created
 
-# controlplane ~ ➜  kubectl apply -f /root/vpa-rbac.yml
-# clusterrole.rbac.authorization.k8s.io/system:metrics-reader created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-actor created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-status-actor created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
-# clusterrole.rbac.authorization.k8s.io/system:evictioner created
-# clusterrolebinding.rbac.authorization.k8s.io/system:metrics-reader created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-actor created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-actor created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-target-reader created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-target-reader-binding created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-evictioner-binding created
-# serviceaccount/vpa-admission-controller created
-# serviceaccount/vpa-recommender created
-# serviceaccount/vpa-updater created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-admission-controller created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-admission-controller created
-# clusterrole.rbac.authorization.k8s.io/system:vpa-status-reader created
-# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-reader-binding created
+
+
+
+
+
+
+
+
+
+
 
 
 

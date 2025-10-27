@@ -27,3 +27,30 @@ if [ "${TAG_TO_APPLY}" == "${DEFAULT_TAG}" ]; then
 fi
 
 $SCRIPT_ROOT/hack/vpa-process-yamls.sh apply $*
+
+
+
+#  kubectl apply -f /root/vpa-crds.yml
+# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalercheckpoints.autoscaling.k8s.io created
+# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalers.autoscaling.k8s.io created
+
+# controlplane ~ ➜  kubectl apply -f /root/vpa-rbac.yml
+# clusterrole.rbac.authorization.k8s.io/system:metrics-reader created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-status-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+# clusterrole.rbac.authorization.k8s.io/system:evictioner created
+# clusterrolebinding.rbac.authorization.k8s.io/system:metrics-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-actor created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-actor created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-target-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-target-reader-binding created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-evictioner-binding created
+# serviceaccount/vpa-admission-controller created
+# serviceaccount/vpa-recommender created
+# serviceaccount/vpa-updater created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-admission-controller created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-admission-controller created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-status-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-reader-binding created
