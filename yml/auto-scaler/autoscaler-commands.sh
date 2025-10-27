@@ -101,8 +101,78 @@ kubectl describe vpa <vpa-name>
 #                               AI, ML, (tensorflow, pytorch, etc.)                 microservices, stateless services
 
 
+k get crd -A
+# NAME                                                  CREATED AT
+# verticalpodautoscalercheckpoints.autoscaling.k8s.io   2025-10-23T20:36:47Z
+# verticalpodautoscalers.autoscaling.k8s.io             2025-10-23T20:36:47Z
+
+kubectl apply -f /root/vpa-crds.yml # fix path to vpa-crds.yml 
+kubectl apply -f /root/vpa-rbac.yml # fix path to vpa-rbac.yml 
+### SEE OUTPUT BELOW ^^^ ###
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-up.sh
+
+# How many VPA's run on a kube-system namespace?
+kubectl get deployments -n kube-system | grep vpa
+# vpa-admission-controller   1/1     1            1           25m
+# vpa-recommender            1/1     1            1           25m
+# vpa-updater                1/1     1            1           25m
+
+# grep c = before and after, grep b = before, grep a = after
+k logs vpa-admission-controller-76f55f79cc-qq8xq -n kube-system | grep -C 2 "pattern" filename
+k logs vpa-recommender-588485c64b-67xmj -n kube-system | grep -B 2 -A 2 "pattern" filename
+k logs vpa-updater-75d58448cf-rcpwr -n kube-system | grep -C 2 "pattern" filename
+kubectl logs $(kubectl get pods -n kube-system --no-headers -o custom-columns=":metadata.name" | grep vpa-updater) -n kube-system
+# pods_eviction_restriction.go:226] too few replicas for ReplicaSet default/flask-app-b6c9c4f78. Found 1 live pods, needs 2 (global 2)
+
+kubectl logs $(kubectl get pods -n kube-system --no-headers -o custom-columns=":metadata.name" | grep vpa-updater) -n kube-system
+
+kubectl scale deployment flask-app --replicas=2
+
+kubectl get deployment flask-app -o wide
+# make sure 2 pods are running
+
+kubectl get pods -l app=flask-app
+# NAME                         READY   STATUS    RESTARTS   AGE
+# flask-app-67b666c5fc-jrc9d   1/1     Running   0          77s
+# flask-app-67b666c5fc-rvt9d   1/1     Running   0          62s
+
+kubectl describe vpa flask-app
+# See recommendations applied CPU and memory, and logs for the VPA.
 
 
+
+
+
+
+
+
+
+#  kubectl apply -f /root/vpa-crds.yml
+# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalercheckpoints.autoscaling.k8s.io created
+# customresourcedefinition.apiextensions.k8s.io/verticalpodautoscalers.autoscaling.k8s.io created
+
+# controlplane ~ ➜  kubectl apply -f /root/vpa-rbac.yml
+# clusterrole.rbac.authorization.k8s.io/system:metrics-reader created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-status-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+# clusterrole.rbac.authorization.k8s.io/system:evictioner created
+# clusterrolebinding.rbac.authorization.k8s.io/system:metrics-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-actor created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-actor created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-checkpoint-actor created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-target-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-target-reader-binding created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-evictioner-binding created
+# serviceaccount/vpa-admission-controller created
+# serviceaccount/vpa-recommender created
+# serviceaccount/vpa-updater created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-admission-controller created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-admission-controller created
+# clusterrole.rbac.authorization.k8s.io/system:vpa-status-reader created
+# clusterrolebinding.rbac.authorization.k8s.io/system:vpa-status-reader-binding created
 
 
 
