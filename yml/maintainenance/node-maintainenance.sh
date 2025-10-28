@@ -1,3 +1,6 @@
+#!/bin/bash
+source ~/awx-venv/bin/activate
+
 ## kubernetes-CKA-0500-Cluster+Maintenance-v1.2.pdf ##
 kube-controller-manager --pod-eviction-timeout=5m0s
 kubectl get pods -o wide
