@@ -493,7 +493,12 @@ k logs -c <container-name> <pod-name>
 kubectl -n elastic-stack logs kibana
 k logs app
 
+# Upgrading to a new Kubernetes version can provide new APIs.
 
+# You can use kubectl convert command to convert manifests between different API versions. For example:
+kubectl convert -f pod.yaml --output-version v1
+# The kubectl tool replaces the contents of pod.yaml with a manifest that sets kind to Pod (unchanged),
+# but with a revised apiVersion.
 
 
 

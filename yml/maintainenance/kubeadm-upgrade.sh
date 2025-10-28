@@ -3,19 +3,14 @@ source ~/awx-venv/bin/activate
 
 kubeadm version
 # kubeadm version: &version.Info{
-#     Major:"1", Minor:"34",
-#     EmulationMajor:"",
-#     EmulationMinor:"",
-#     MinCompatibilityMajor:"",
-#     MinCompatibilityMinor:"", 
-#     GitVersion:"v1.34.1", 
-#     GitCommit:"93248f9ae092f571eb870b7664c534bfc7d00f03", 
-#     GitTreeState:"clean", BuildDate:"2024-09-30T00:00:00Z", 
-#     GoVersion:"go1.25.3", Compiler:"gc", Platform:"linux/amd64"
+#     Major:"1", Minor:"34"
 # }
 
 kubeadm upgrade plan
 # https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/
+# https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+# https://kubernetes.io/docs/tasks/tools/
+
 
 ## Master node upgrade
 ## Upgrading knods from v.1.11 to 1.12.0
