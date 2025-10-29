@@ -500,7 +500,8 @@ kubectl convert -f pod.yaml --output-version v1
 # The kubectl tool replaces the contents of pod.yaml with a manifest that sets kind to Pod (unchanged),
 # but with a revised apiVersion.
 
-
+crictl ps --all
+crictl logs container-id
 
 
 
