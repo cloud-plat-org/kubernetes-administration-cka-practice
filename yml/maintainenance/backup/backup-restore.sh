@@ -55,10 +55,10 @@ ls -al /var/lib/etcd
 etcdutl snapshot restore /opt/snapshot-pre-boot.db --data-dir /var/lib/etcd-from-backup
 
 etcdutl snapshot restore /opt/snapshot-pre-boot.db --data-dir /var/lib/etcd-from-backup
-2025-04-24T09:38:07Z    info    snapshot/v3_snapshot.go:265     restoring snapshot      {"path": "/opt/snapshot-pre-boot.db", "wal-dir": "/var/lib/etcd-from-backup/member/wal", "data-dir": "/var/lib/etcd-from-backup", "snap-dir": "/var/lib/etcd-from-backup/member/snap", "initial-memory-map-size": 10737418240}
-2025-04-24T09:38:07Z    info    membership/store.go:141 Trimming membership information from the backend...
-2025-04-24T09:38:07Z    info    membership/cluster.go:421       added member    {"cluster-id": "cdf818194e3a8c32", "local-member-id": "0", "added-peer-id": "8e9e05c52164694d", "added-peer-peer-urls": ["http://localhost:2380"]}
-2025-04-24T09:38:07Z    info    snapshot/v3_snapshot.go:293     restored snapshot       {"path": "/opt/snapshot-pre-boot.db", "wal-dir": "/var/lib/etcd-from-backup/member/wal", "data-dir": "/var/lib/etcd-from-backup", "snap-dir": "/var/lib/etcd-from-backup/member/snap", "initial-memory-map-size": 10737418240}
+# 2025-04-24T09:38:07Z    info    snapshot/v3_snapshot.go:265     restoring snapshot      {"path": "/opt/snapshot-pre-boot.db", "wal-dir": "/var/lib/etcd-from-backup/member/wal", "data-dir": "/var/lib/etcd-from-backup", "snap-dir": "/var/lib/etcd-from-backup/member/snap", "initial-memory-map-size": 10737418240}
+# 2025-04-24T09:38:07Z    info    membership/store.go:141 Trimming membership information from the backend...
+# 2025-04-24T09:38:07Z    info    membership/cluster.go:421       added member    {"cluster-id": "cdf818194e3a8c32", "local-member-id": "0", "added-peer-id": "8e9e05c52164694d", "added-peer-peer-urls": ["http://localhost:2380"]}
+# 2025-04-24T09:38:07Z    info    snapshot/v3_snapshot.go:293     restored snapshot       {"path": "/opt/snapshot-pre-boot.db", "wal-dir": "/var/lib/etcd-from-backup/member/wal", "data-dir": "/var/lib/etcd-from-backup", "snap-dir": "/var/lib/etcd-from-backup/member/snap", "initial-memory-map-size": 10737418240}
 
 vim /etc/kubernetes/manifests/etcd.yaml
 
@@ -98,14 +98,12 @@ kubectl get pods -A -o wide
 # NOTE: If deployments don't appear, the backup was taken BEFORE they were created
 # A backup only contains the cluster state from the time it was taken
 
-kubectl get pods -n kube-system
-k describe pod etcd-controlplane -n kube-system
+# References
+# https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster
 
-k describe pod kube-apiserver-controlplane -n kube-system | grep apiserver.crt
-openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+# https://github.com/etcd-io/website/blob/main/content/en/docs/v3.5/op-guide/recovery.md
 
-
-
+# https://www.youtube.com/watch?v=qRPNuT080Hk
 
 
 
