@@ -188,4 +188,60 @@ openssl x509 -req -in apiserver.csr -CA ca.crt -CAkey ca.key \
 # --kubelet-client-key=/var/lib/kubernetes/apiserver-kubelet-client.key
 
 
+# kubelet
+# kubelet.crt (certificate)
+# kubelet.key (private key)
+# Each certificate is named after the node (system:node:<node-name>).
+# kubelet-config.yml
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+authentication:
+  x509:
+    clientCAFile: "/var/lib/minikube/certs/ca.pem"
+authorization:
+  mode: Webhook
+clusterDomain: "cluster.local"
+clusterDNS:
+  addresses:
+  - 10.96.0.10
+podCIDR: "$POD_CIDR"
+resolvConf: "/run/systemd/resolve/resolv.conf"
+runtimeRequestTimeout: "15m"
+tlsCertFile: "/var/lib/kubelet/pki/kubelet.crt"
+tlsPrivateKeyFile: "/var/lib/kubelet/pki/kubelet.key"
+
+
+########################### Kubernetes certificate healthchecks ###########################
+# Manual (hard way)
+cat /etc/systemd/system/kubelet.service
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver \
+# kubeadm (easy way)
+cat /etc/kubernetes/manifests/kube-apiserver.yaml
+# get excel spreadsheet of all the certificates and their paths
+# /etc/kubernetes/pki/apiserver.crt
+openss x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+# name: Subject CN=kube-apiserver
+# alternetneme: list all
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
