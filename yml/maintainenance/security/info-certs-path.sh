@@ -224,7 +224,11 @@ openss x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
 # name: Subject CN=kube-apiserver
 # alternetneme: list all
 
-
+journalctl -u etcd.service -l
+kubectl logs etcd-master
+# use docker to list containers
+crictl ps --all
+crictl inspect
 
 
 
