@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: CertificateSigningRequest
+metadata:
+  name: jane
+spec:
+  expirationSeconds: 86400
+  - usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  request: |
+    cat user.csr | base64
+    

@@ -278,6 +278,37 @@ diff -u /home/dan_i/learn/cka/yml/maintainenance/security/kube-apiserver.yml /ho
 ### notice that the apiserver certs are under /etc/kubernetes/pki/ and
 ### the etcd certs are under /etc/kubernetes/pki/etcd/
 
+# master node is the CA server
+# certificate API server is the CA server
+# When admin gets a csr, he creates a 
+# 1> CertificateSigningRequest object
+# 2> Reviewed by the admin
+# 3> Approved or Denied
+# 4> Certificate is issued
+
+# New User
+openssl genrsa -out user.key 2048
+openssl req -new -key user.key -subject "/CN=user" -out user.csr
+# user.key (private key)
+# user.csr (certificate signing request)
+# Sends the csr to the admin
+# The admin creates a CertificateSigningRequest object
+# yml/maintainenance/security/pod-definition.yml
+# kubectl apply -f yml/maintainenance/security/pod-definition.yml
+# kubectl get csr
+# kubectl certificate approve jane
+
+# kubectl get csr jane -o yaml | grep certificate | base64 -d > user.crt
+# echo AAAKDIGakd.. | base64 -decode > user.crt
+### This is all done by the controller manager ###
+CSR-APPROVING
+CSR-SIGNING
+cat /etc/kubernetes/manifests/kube-controller-manager.yaml
+
+
+
+
+
 
 
 
