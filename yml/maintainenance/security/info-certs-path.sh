@@ -293,10 +293,14 @@ openssl req -new -key user.key -subject "/CN=user" -out user.csr
 # user.csr (certificate signing request)
 # Sends the csr to the admin
 # The admin creates a CertificateSigningRequest object
-# yml/maintainenance/security/pod-definition.yml
-# kubectl apply -f yml/maintainenance/security/pod-definition.yml
+cat user.csr | base64 -w 0 # copy the output and paste it into the csr request file
+# yml/maintainenance/security/csrequest.yml
+# kubectl apply -f yml/maintainenance/security/csrequest.yml
 # kubectl get csr
 # kubectl certificate approve jane
+# kubectl certificate deny jane
+# k delete csr jane
+
 
 # kubectl get csr jane -o yaml | grep certificate | base64 -d > user.crt
 # echo AAAKDIGakd.. | base64 -decode > user.crt
@@ -305,10 +309,52 @@ CSR-APPROVING
 CSR-SIGNING
 cat /etc/kubernetes/manifests/kube-controller-manager.yaml
 
+# How user certs are used and referenced for kube-apiserver
+kubectl get pods -n kube-system --kubeconfig config.yml
+# The reason the --kubeconfig is not needed is because the 
+# kubeconfig file is already in the .kube/ directory .kube/config
+cat ~/.kube/config # This is the kubeconfig file
 
+# Three main components of the kubeconfig file:
+# clusters: list of clusters (development)
+#   --server https://development:6443
+# contexts: context ties a cluster to a user (admin@development)
+# users: list of users (admin)
+#   --client-key admin.key
+#   --client-certificate admin.crt
+#   --certificate-authority ca.crt
+kubectl config view
+kubectl config view --kubeconfig=my-custom-config.yml
+# how do you choose the context?
+kubectl config use-context admin@development
+kubectl config -h
+# namespace can be added to the context if it is in the cluster
+kubectl config set-context --current --namespace=development
 
+# Secify the path in the kubeconfig file
+#    certificate-authority: /etc/kubernetes/pki/ca.crt
+#     or 
+#    certificate-authority-data: cat ca.crt | base64 -w 0
 
+echo "AAAAB3NzaC1yc2EAAAADAQABAAACAQC" | base64 -decode > ca.crt
+# change from default kubeconfig to my-custom-config.yml
+kubectl config use-context admin@development --kubeconfig=my-custom-config.yml
+# or to make it the default path for kubectl
+KUBECONFIG=my-custom-config.yml kubectl get pods
+# add to ~/.bashrc
+export KUBECONFIG=my-custom-config.yml
+vim ~/.bashrc 
+source ~/.bashrc 
+# now kubectl will use the custom kubeconfig file
+kubectl get pods
 
+curl -k https://development:6443/version
+curl -k https://development:6443/api/v1/namespaces/default/pods
+/metrics # health check
+/healthz # health check
+/api # api server (core groups) *
+/apis # api server (named groups) *
+/logs # logs for third party integrations
 
 
 
