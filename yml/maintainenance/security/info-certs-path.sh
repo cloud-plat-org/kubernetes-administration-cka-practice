@@ -218,6 +218,7 @@ cat /etc/systemd/system/kubelet.service
 ExecStart=/usr/local/bin/kube-apiserver \
 # kubeadm (easy way)
 cat /etc/kubernetes/manifests/kube-apiserver.yaml
+cat /etc/kubernetes/manifests/etcd.yaml 
 # get excel spreadsheet of all the certificates and their paths
 # /etc/kubernetes/pki/apiserver.crt
 openss x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
@@ -229,14 +230,53 @@ kubectl logs etcd-master
 # use docker to list containers
 crictl ps --all
 crictl inspect
+crictl logs 89c877c94b761
+# not docker use crictl to list containers
+docker ps --all | grep kube-apiserver
+doceker logs 89c877c94b761
+# port 2379 is the etcd port *
+# port 6443 is the apiserver port
+docker ps -a | grep etcd
+docker logs <container-id>
+# check path of error:
+ls /etc/kubernetes/pki/etcd/
+# server.crt, server.key, ca.crt # no kube-apiserver.crt or kube-apiserver.key
+# after fixing the path
+docker ps -a | grep kube-apiserver  # look for the times the container was restarted
+
+#kubeadm documentation spreadsheet
+# certificate path
+# CN Name
+# ATL Name
+# Organization
+# Issuer
+# Expiration Date
 
 
+# Serial Number
+# Subject Alternative Names
+# Issuer Alternative Names
+# Subject Key Identifier
+# Authority Key Identifier
+# Basic Constraints
+# Key Usage
+# Extended Key Usage
+# https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/
+# https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/
+# https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/
+# https://kubernetes.io/docs/tasks/tls/certificate-issue-client-csr/
 
+# What is the Common Name (CN) configured on the Kube API Server Certificate?
+OpenSSL Syntax: openssl x509 -in file-path.crt -text -noout
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+openssl x509 -in /etc/kubernetes/pki/etcd/server.crt -text -noout
+openssl x509 -in /etc/kubernetes/pki/ca.crt -text -noout
 
+diff -u /home/dan_i/learn/cka/yml/maintainenance/security/etcd.yml /home/dan_i/learn/cka/yml/maintainenance/security/test.yml
+diff -u /home/dan_i/learn/cka/yml/maintainenance/security/kube-apiserver.yml /home/dan_i/learn/cka/yml/maintainenance/security/test-apiserver.yml
 
-
-
-
+### notice that the apiserver certs are under /etc/kubernetes/pki/ and
+### the etcd certs are under /etc/kubernetes/pki/etcd/
 
 
 
