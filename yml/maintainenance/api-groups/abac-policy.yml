@@ -1,0 +1,9 @@
+apiVersion: abac.authorization.kubernetes.io/v1beta1
+kind: Policy
+spec:
+  user: dev-user
+  namespace: default
+  resource: pods
+  apiGroup: v1
+  verb: get,list,watch,create,delete
+  
