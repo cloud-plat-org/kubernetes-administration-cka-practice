@@ -47,11 +47,28 @@ k describe role kube-proxy -n kube-system
 #   Group  system:bootstrappers:kubeadm:default-node-token 
 # account assigned to the kube-proxy role: system:bootstrappers:kubeadm:default-node-token
 
+ k auth can-i list pods -n default --as=dev-user
+# no, it shows dev-user cannot list pods in the default namespace
 
+ kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods
+ # https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_role/
 
+# Role: developer
+# Role Resources: pods
+# Role Actions: list
+# Role Actions: create
+# Role Actions: delete
+# RoleBinding: dev-user-binding
+# RoleBinding: Bound to dev-user
+kubectl create role developer --verb=list --verb=create --verb=delete --resource=pods -n default
+kubectl create rolebinding dev-user-binding --role=developer --user=dev-user -n default
 
+kubectl create role developer --verb=get --verb=watch --verb=create --verb=delete --resource=pods --resource-name=dark-blue-app -n blue
 
-
+k edit role developer -n blue
+k replace -f /tmp/kubectl-edit-developer.yaml --force
+vim /tmp/kubectl-edit-developer.yaml
+k describe rolebinding dev-user-binding -n blue
 
 
 
