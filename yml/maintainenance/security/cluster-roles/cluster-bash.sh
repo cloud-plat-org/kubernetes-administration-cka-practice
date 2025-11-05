@@ -38,20 +38,31 @@ kubectl create -f cluster-admin-rolebinding.yml
 k create clusterrole view-nodes --resource=nodes --verb=get,list,watch
 k describe clusterrole view-nodes
 
+k get nodes --as=michelle
+# no, it shows michelle cannot get nodes
 k create clusterrolebinding view-nodes-binding --clusterrole=view-nodes --user=michelle
 k describe clusterrolebinding view-nodes-binding
 
 kubectl api-resources --namespaced=false
+#PersistentVolume
+# StorageClass
+# VolumeAttachment
+# VolumeAttributesClass
 
-PersistentVolume
-StorageClass
-VolumeAttachment
-VolumeAttributesClass
-k create clusterrole storage-admin --resource=storageclasses,persistentvolumes --verb=get,list,watch,create,update,delete
+k get storageclasses --as=michelle
+k create clusterrole storage-admin --resource=storageclasses,persistentvolumes \
+  --verb=get,list,watch,create,update,delete \
 k describe clusterrole storage-admin
+k get clusterrole storage-admin -o yaml
 
 k create clusterrolebinding michelle-storage-admin --clusterrole=storage-admin --user=michelle
 k describe clusterrolebinding michelle-storage-admin
+k get clusterrolebinding michelle-storage-admin -o yaml
+k get storageclasses --as=michelle
+
+
+
+
 
 
 

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-kubenetes-dashboard
+spec:
+  serviceAccountName: dashboard-sa
+  containers:
+  - name: my-kubenetes-dashboard
+    image: my-kubenetes-dashboard
+    ports:
+    - containerPort: 80
+    - containerPort: 443

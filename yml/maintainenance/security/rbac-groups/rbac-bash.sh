@@ -75,11 +75,13 @@ kubectl get pod dark-blue-app -n blue --as=dev-user
 # no, it shows dev-user cannot get pod dark-blue-app in the blue namespace
 kubectl create role developer --verb=get,watch,create,delete --resource=pods --resource-name=dark-blue-app -n blue
 k describe role developer -n blue
+k get role developer -n blue -o yaml
 
 k edit role developer -n blue # wq! to save and exit
 k replace -f /tmp/kubectl-edit-developer.yaml --force
 vim /tmp/kubectl-edit-developer.yaml
 k describe rolebinding dev-user-binding -n blue
+k get rolebinding dev-user-binding -n blue -o yaml
 
 k create deployment nginx-deploy --image=nginx --replicas=2 -n blue --as=dev-user
 # no, it shows dev-user cannot create deployment nginx-deploy in the blue namespace
