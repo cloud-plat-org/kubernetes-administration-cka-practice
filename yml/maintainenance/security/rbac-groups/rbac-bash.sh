@@ -85,6 +85,8 @@ k create deployment nginx-deploy --image=nginx --replicas=2 -n blue --as=dev-use
 # no, it shows dev-user cannot create deployment nginx-deploy in the blue namespace
 k edit role developer -n blue
 # apiGroups: ["apps"]
+# resources: ["deployments"]
+# verbs: ["create", "update", "delete", get, list, watch]
 
 
 
