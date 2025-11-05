@@ -20,8 +20,12 @@ kubectl auth can-i create pods -n default --as=dev-user
 # if no, it shows dev-user cannot create pods in the default namespace
 
 k describe pod kube-apiserver-controlplane -n kube-system
-#  --authorization-mode=Node,RBAC
+#  --authorization-mode=Node,RBAC'
+cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep authorization-mode
+ps aux | grep kube-apiserver | grep authorization-mode
+
 k get roles -A
+k get roles -A --no-headers | wc -l
 k bet roles -n default
 # what are the resources available in the kube-proxy role?
 k describe role kube-proxy -n kube-system
@@ -47,12 +51,14 @@ k describe role kube-proxy -n kube-system
 #   Group  system:bootstrappers:kubeadm:default-node-token 
 # account assigned to the kube-proxy role: system:bootstrappers:kubeadm:default-node-token
 
- k auth can-i list pods -n default --as=dev-user
+k auth can-i list pods -n default --as=dev-user
 # no, it shows dev-user cannot list pods in the default namespace
+k get pods -n default --as=dev-user
 
  kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods
  # https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_role/
-
+kubectl create role pod-reader --verb=get,list,watch --resource=pods
+k describe role pod-reader
 # Role: developer
 # Role Resources: pods
 # Role Actions: list
@@ -60,17 +66,25 @@ k describe role kube-proxy -n kube-system
 # Role Actions: delete
 # RoleBinding: dev-user-binding
 # RoleBinding: Bound to dev-user
-kubectl create role developer --verb=list --verb=create --verb=delete --resource=pods -n default
+kubectl create role developer --verb=list,create,delete --resource=pods -n default
 kubectl create rolebinding dev-user-binding --role=developer --user=dev-user -n default
+k describe role developer -n default
+k describe rolebinding dev-user-binding -n default
 
-kubectl create role developer --verb=get --verb=watch --verb=create --verb=delete --resource=pods --resource-name=dark-blue-app -n blue
+kubectl get pod dark-blue-app -n blue --as=dev-user
+# no, it shows dev-user cannot get pod dark-blue-app in the blue namespace
+kubectl create role developer --verb=get,watch,create,delete --resource=pods --resource-name=dark-blue-app -n blue
+k describe role developer -n blue
 
-k edit role developer -n blue
+k edit role developer -n blue # wq! to save and exit
 k replace -f /tmp/kubectl-edit-developer.yaml --force
 vim /tmp/kubectl-edit-developer.yaml
 k describe rolebinding dev-user-binding -n blue
 
-
+k create deployment nginx-deploy --image=nginx --replicas=2 -n blue --as=dev-user
+# no, it shows dev-user cannot create deployment nginx-deploy in the blue namespace
+k edit role developer -n blue
+# apiGroups: ["apps"]
 
 
 
