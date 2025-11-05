@@ -47,17 +47,38 @@ kubectl exec -it my-kubenetes-dashboard -- sh ls -al /var/run/secrets/kubernetes
 # automateServiceAccountToken to false. (in the pod definition.yml or service-account.yml)
 automateServiceAccountToken: false
 
+# Creete a token for use of the service account.
+kubectl create token dashboard-sa
+# shares it on screen, by default it is 1 hour
+kubectl create token dashboard-sa --duration=8h
 
+jq -R 'split(".") | select(length > 0) | .[0],.[1] | @base64d | fromjson' <(kubectl create token dashboard-sa)
+jq -R 'split(".") | select(length > 0) | .[0],.[1] | @base64d | fromjson' <<< X8fwalis..... # token
 
+curl https://192.168.49.70:6443/api -insecure -H "Authorization: Bearer X8fwalis....."
 
+# every namespace has a default service account.
+# the default namespace is used for pods create within the namespace.
+# if you want to attach a service account to a pod use the serviceAccountName field in the pod definition.yml
+# When serviceAccountName is specified:
+#   automatically mount the service account token to the pod.
+#   automatically rotates the token
+#   automatically expires the token when the pod is deleted.
 
+k get serviceaccount default -o wide
+# no token is created for the default service account.
+# pods is forbidden: User "system:serviceaccount:default:default" 
+#cannot list resource "pods" in API group "" in the namespace "default"
 
+k describe pod web-dashboard-7666579d69-2sh22 | grep Service\ Account
+# Service Account:  default
+#     Mounts:
+#       /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-n5d5
 
-
-
-
-
-
+kubectl create serviceaccount dashboard-sa 
+# after rbac permissions were added to the service account, a token is created for the service account.
+ls /var/rbac
+dashboard-sa-role-binding.yaml  pod-reader-role.yaml
 
 
 
