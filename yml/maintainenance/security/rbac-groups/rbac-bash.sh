@@ -16,6 +16,12 @@ kubectl auth can-i create roles -n default
 kubectl auth can-i create rolebindings -n default
 # if administrator, you can check a user's access to a resource
 kubectl auth can-i create pods -n default --as=dev-user
+# if yes, it shows dev-user can create pods in the default namespace
+# if no, it shows dev-user cannot create pods in the default namespace
+
+
+
+
 
 
 
