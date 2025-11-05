@@ -19,6 +19,35 @@ kubectl auth can-i create pods -n default --as=dev-user
 # if yes, it shows dev-user can create pods in the default namespace
 # if no, it shows dev-user cannot create pods in the default namespace
 
+k describe pod kube-apiserver-controlplane -n kube-system
+#  --authorization-mode=Node,RBAC
+k get roles -A
+k bet roles -n default
+# what are the resources available in the kube-proxy role?
+k describe role kube-proxy -n kube-system
+# Name:         kube-proxy
+# Labels:       <none>
+# Annotations:  <none>
+# PolicyRule:
+#   Resources   Non-Resource URLs  Resource Names  Verbs
+#   ---------   -----------------  --------------  -----
+#   configmaps  []                 [kube-proxy]    [get]
+## kube-porxy role can only get configmaps with the name kube-proxy
+
+ k describe rolebinding kube-proxy -n kube-system
+# Name:         kube-proxy
+# Labels:       <none>
+# Annotations:  <none>
+# Role:
+#   Kind:  Role
+#   Name:  kube-proxy
+# Subjects:
+#   Kind   Name                                             Namespace
+#   ----   ----                                             ---------
+#   Group  system:bootstrappers:kubeadm:default-node-token 
+# account assigned to the kube-proxy role: system:bootstrappers:kubeadm:default-node-token
+
+
 
 
 
