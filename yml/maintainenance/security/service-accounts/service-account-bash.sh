@@ -69,16 +69,33 @@ k get serviceaccount default -o wide
 # no token is created for the default service account.
 # pods is forbidden: User "system:serviceaccount:default:default" 
 #cannot list resource "pods" in API group "" in the namespace "default"
+k describe serviceaccount default
+# Tokens: none
 
 k describe pod web-dashboard-7666579d69-2sh22 | grep Service\ Account
 # Service Account:  default
 #     Mounts:
 #       /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-n5d5
+k describe pod web-dashboard-7666579d69-2sh22 
+# Image: 
 
 kubectl create serviceaccount dashboard-sa 
 # after rbac permissions were added to the service account, a token is created for the service account.
-ls /var/rbac
-dashboard-sa-role-binding.yaml  pod-reader-role.yaml
+# ls /var/rbac
+# dashboard-sa-role-binding.yaml  pod-reader-role.yaml
 
+kubectl create token dashboard-sa
+# past token into dashboard web ui.
 
-
+kubectl get deployment web-dashboard -o yaml > deployment-def.yml
+# vim deployment-def.yml
+# change serviceAccountName to dashboard-sa
+kubectl apply -f deployment-def.yml
+kubectl get deployment web-dashboard
+kubectl describe deployment web-dashboard
+kubectl get pod web-dashboard-7666579d69-2sh22
+kubectl describe pod web-dashboard-7666579d69-2sh22
+kubectl exec -it web-dashboard-7666579d69-2sh22 -- sh ls -al /var/run/secrets/kubernetes.io/serviceaccount
+# -rw-r--r--    1 root     root          1166 Nov  5 12:00 ca.crt
+# -rw-r--r--    1 root     root           660 Nov  5 12:00 namespace
+# -rw-r--r--    1 root     root           660 Nov  5 12:00 token
