@@ -35,6 +35,54 @@ ps aux | grep sleep
 # The root user on the host has all the capabilities.
 # Processes run by the root user on the host have all the capabilities.
 /include/security/capability.h
+docker runs a container with a limited set of capabilities:
+# BROADCAST, SYS_ADMIN, SYSLOG, MAC_ADMIN, NET_ADMIN, etc. # these are linux capabilities.
+# If you wish to override the default capabilities, you can use the --cap-add flag to add the capabilities.
+docker run --cap-add SYS_ADMIN ubuntu sleep 3600
+ps aux | grep sleep 
+# user: root
+# capabilities: SYS_ADMIN
+docker run --cap-drop ALL ubuntu sleep 3600
+ps aux | grep sleep 
+# user: root
+# capabilities: none
+docker run --privileged ubuntu sleep 3600
+ps aux | grep sleep 
+# user: root
+# capabilities: all
+
+# KUBERNETES SECURITY CONTEXT:
+# Kubernetes security context is a set of properties that can be applied to a pod or a container.
+# It is used to configure the security of a pod or a container.
+# If set at the pod level, it applies to all containers in the pod.
+
+kubectl exec ubuntu-sleeper -- whoami
+# root
+kubectl exec ubuntu-sleeper -- id
+# uid=1001(root) gid=1001(root) groups=1001(root)
+kubectl exec ubuntu-sleeper -- ps aux
+# user: root
+# capabilities: SYS_ADMIN, NET_ADMIN
+kubectl exec ubuntu-sleeper -- ip addr
+# 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+
+k edit pod ubuntu-sleeper
+# better way to edit the pod:
+kubectl get pod ubuntu-sleeper -o yaml > ubuntu-sleeper.yml
+vim ubuntu-sleeper.yml
+## look for this: /securityContext 
+# Add the following:
+# securityContext:
+#   runAsUser: 1001
+#   capabilities:
+#     add:
+#       - SYS_ADMIN
+#       - NET_ADMIN
+
+k replace -f /tmp/kubectl-edit-47656155.yaml --force
+
+k replace -f yml/ubuntu-sleeper.yml --force
+
 
 
 
