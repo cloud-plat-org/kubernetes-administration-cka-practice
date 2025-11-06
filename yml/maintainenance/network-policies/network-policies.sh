@@ -27,7 +27,9 @@ Network Security:
 
 kubectl create -f db-network-policy.yml
 kubectl get networkpolicies
+k get netpol
 kubectl describe networkpolicy db-network-policy
+k describe netpol payroll-policy
 kubectl delete networkpolicy db-network-policy
 
 # NOTE: Network policies are enforced by the network solution provider running on the cluster.
