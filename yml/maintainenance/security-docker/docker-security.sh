@@ -70,25 +70,16 @@ k edit pod ubuntu-sleeper
 # better way to edit the pod:
 kubectl get pod ubuntu-sleeper -o yaml > ubuntu-sleeper.yml
 vim ubuntu-sleeper.yml
-## look for this: /securityContext 
+## look for this: /securityContext, this is the pod security context.
 # Add the following:
 # securityContext:
-#   runAsUser: 1001
-#   capabilities:
+#   runAsUser: 1001 # run as user 1001
+                          # Yes, that is accurate: the securityContext.capabilities
+                          # field (where you add capabilities like SYS_ADMIN and NET_ADMIN)
+                          # can only be specified for containers, not directly for the pod itself.
+#   capabilities:  Can only be added to 
 #     add:
-#       - SYS_ADMIN
-#       - NET_ADMIN
+#       - SYS_ADMIN # add SYS_ADMIN capability
+#       - NET_ADMIN # add NET_ADMIN capability
 
-k replace -f /tmp/kubectl-edit-47656155.yaml --force
-
-k replace -f yml/ubuntu-sleeper.yml --force
-
-
-
-
-
-
-
-
-
-
+k replace -f ubuntu-sleeper.yml --force
