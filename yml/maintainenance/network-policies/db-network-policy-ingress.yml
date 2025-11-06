@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy
+spec:
+  podSelector: # this is the pod that the network policy is applied to.
+    matchLabels:
+      role: db # the db pod has to have this label for the network policy to be applied.
+  policyTypes: # this is the type of network policy.
+  - Ingress # this is the type of network policy.
+  ingress:
+  - from: # this is the source of the network policy.
+  # This would be rule 1
+    - podSelector: # this is the pod that the network policy is applied to.
+        matchLabels:
+          app: api-pod # the api-pod has to have this label for the network policy to be applied.
+      namespaceSelector: # not have a - namespaceSelector: means podSelector and namespaceSelector are applied
+        matchLabels:
+          kubernetes.io/metadata.name: prod # the api-namespace has to have this label for the network policy to be applied.
+    # This would be rule 2
+    - ipBlock: # this is the ip block that the network policy is applied to.
+        cidr: 10.244.0.0/16 # the ip block that the network policy is applied to.
+    ports: # this is the port that the network policy is applied to.
+    - protocol: TCP # this is the protocol that the network policy is applied to.
+      port: 3306 # this is the port that the network policy is applied to.

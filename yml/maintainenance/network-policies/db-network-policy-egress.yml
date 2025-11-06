@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: db-pod
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+      matchLabels:
+        app: api-pod
+    ports:
+    - protocol: TCP
+      port: 3306
+  egress:
+  - to:
+    - ipBlock:
+      cidr: 10.244.0.0/16
+    ports:
+    - protocol: TCP
+      port: 
+        - protocol: TCP
+          port: 80
