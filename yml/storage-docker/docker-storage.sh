@@ -289,6 +289,25 @@ kubectl edit webapp
 # add volume: name: log-volume hostPath: path: /var/log/webapp 
 kubectl replace --force -f /log/kubectl-edit-838239eddjid.yaml
 
+ls -al /var/log/webapp
+# app.log is created.
+
+kubectl edit webapp
+# under volumes: add persistentVolumeClaim: claimName: claim-log-1
+kubectl replace --force -f /log/kubectl-edit-83eeda9eddjid.yaml
+
+ls -al /var/log/webapp
+# app.log is created.
+
+# kubectl delete pvc claim-log-1
+# stuck in terminating state.
+# Reason: The volume is still in use by the pod.
+# Delete pod first, then delete pvc.
+# when stuck delete the pod and pvc will be deleted.
+
+k get pv 
+# released state.
+
 
 
 
