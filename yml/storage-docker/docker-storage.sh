@@ -141,7 +141,97 @@ docker run -it \
   mysql
 # When running this command you can specify the volume driver to use.
 
+### Container Runtime Interface (CRI)
+
+# in the past containerD was used to store the data.
+# When rkt and cri-o came it it was important not to depend on dockerD source code.
+# Possibility to use different container runtimes like containerD, cri-o, etc.
+
+## rkt
+# c
+# r   Old: containerD, now CRI
+# i
+## cri-o
+#    CRI is a standard that determines how a orchestration solution like 
+#    kubernetes communicates with a container runtime like docker.
+
+### Container Network Interface (CNI) - CNI is a standard for networking.
+
+# Calico <--- based on the CNI standard.   
+# Flannel <--- based on the CNI standard.
+# Cilium <--- based on the CNI standard.
+
+
 ### Container Storage Interface (CSI)
+# Not a kubernetes standard, but a universal standard for storage.
+# Should make any container orchestration solution use the storage plugins.
+
+# portworx
+# Amazon EBS
+# Managed Disk
+# Dell EMC
+# GlusterFS
+# NetApp
+# ExtreemIO
+# HP E
+# Hitachi
+# Pure Storage
+
+# CloudFoundry and Mesos are using CSI.
+# CloudFloundry is a container orchestration solution.
+# Mesos is a container orchestration solution.
+
+### Remote Procedure Call (RPC) 
+# Create Volume 
+# --> Should call to create a new volume
+# --> Should provision a new volume on the storage backend.
+# Delete Volume 
+# --> Should call to delete the volume
+# --> Should decommission the volume
+# Controller Publish Volume 
+# --> Should call to place a workload that uses the volume onto a node.
+# --> Should make the volume available to the node.
+
+
+### VOLUMES ###
+# A place to keep data persistent.
+kubectl create -f random-pod.yml
+# Volumes created within the pod definition file.
+
+### Persistent Volumes ###
+# More of a managed volume solution.
+# a cluster wide resource that can be managed by an administrator.
+# users can carve out a portion of the storage backend and use it for their own purposes.
+## Persistent Volume Claims (PVCs).
+# Users to this using Persistent Volume Claims (PVCs).
+
+kubectl create -f persistant-volume.yml
+kubectl get persistentvolumes
+k get pv pv-vol1
+
+### Persistent Volume Claims (PVCs) ###
+# Every PVC is bound to a Persistent Volume (PV).
+
+# requirments:
+# sufficient capacity
+# access modes
+# storage class
+# volume mode
+# selectors
+
+# if there are multiple volumes that meet the requirements,
+# you can still use a selector with labels to choose a specific volume.
+
+# if a claim is smaller than the volume and they get bound, 
+# the remaining space can't be used.
+# if there are no volumes available, the claim will remain pending.
+# once a volume is created, the pending claim will be bound to the volume.
+
+kubectl create -f persistant-volume-claim.yml
+kubectl get persistentvolumeclaims
+k get pvc my-claim
+
+
 
 
 

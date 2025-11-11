@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: random-number-generator
+spec:
+  containers:
+    - name: alpine
+      image: alpine
+      command: ["/bin/sh", "-c"]
+      args: ["shuf -i 1-100 -n 1 >> /opt/number.out"] # This would be deleted with the pod.
+      volumeMounts:
+        - mountPath: /opt
+          name: data-volume     
+
+  volumes:
+    - name: data-volume # This volume is persistent.
+  hostPath:
+    path: /data
+    type: Directory
+
+  volumes:
+    - name: data-volume
+    awsElasticBlockStore:
+      volumeID: <volume-id>
+      fsType: ext4
