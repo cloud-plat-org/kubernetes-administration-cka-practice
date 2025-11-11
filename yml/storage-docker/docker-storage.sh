@@ -199,6 +199,8 @@ kubectl create -f random-pod.yml
 # Volumes created within the pod definition file.
 
 ### Persistent Volumes ###
+
+# https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes
 # More of a managed volume solution.
 # a cluster wide resource that can be managed by an administrator.
 # users can carve out a portion of the storage backend and use it for their own purposes.
@@ -231,7 +233,22 @@ kubectl create -f persistant-volume-claim.yml
 kubectl get persistentvolumeclaims
 k get pvc my-claim
 
+kubectl get persistentvolumes
+# pv-vol1 is bound to my-claim
+# since there is only one volume, the claim is bound to the volume.
+# even though the claim is 500Mi, the volume is 1Gi, the claim is bound to the volume.
 
+kubectl delete persistentvolumeclaim my-claim
+kubectl get persistentvolumes
+# pv-vol1 is no longer bound to my-claim
+# since the claim is deleted, the volume is no longer bound to the claim.
+# the volume is still available and can be used by other claims.
+## default setting on the persistent volume:
+    #  persistentVolumeReclaimPolicy: Retain  
+    # Retain: Volume is not deleted, not available for other claims.
+    # Delete: Volume is deleted when the PVC is deleted.
+    # Recycle: Deprecated, It use to delete the data and make it available for other claims.
+        # rm -rf /data/mysql/* # this was sufficient for the recycle policy.
 
 
 
