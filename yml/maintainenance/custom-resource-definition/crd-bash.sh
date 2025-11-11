@@ -1,5 +1,9 @@
 #!/bin/bash
 
+CRD can be either Namespaced or ClusterScoped.
+Namespaced: The resource is scoped to a namespace.
+ClusterScoped: The resource is not scoped to a namespace.
+
 # Deployments
 kubectl create -f deployment.yml
 kubectl get deployments
@@ -46,7 +50,26 @@ kubectl delete -f flight-ticket.yml
 # This all edit the etcd database.
 
 # Sill needs a contoller to watch the etcd database for changes to the flight ticket object.
+    # flightticket-controller.go
+# https://github.com/kubernetes/sample-controller
+cd ../kubernetes/sample-controller/
+
+# Package the custom controller in a docker image.
+# This could be run inside your kubernetes cluster as a pod or deployment.
+
+# CRD ==== Resources ==== Controller 
+# CRD ==== Controller 
+# |=================|
+#  Operator Framework
+# |=================|
+kubectl create -f flight-operator.yml
 
 
+EtcdCluster ----- ETCDController
+EtcdBackup ----- Backup Operator
+EtcdRestore ----- Restore Operator
+# |=================|
+#  Operator Framework
 
-
+# Operator Framework is a framework for building operators.
+#  Operatorhub.io  is a repository of operators for the Operator Framework.
