@@ -251,9 +251,40 @@ kubectl get persistentvolumes
         # rm -rf /data/mysql/* # this was sufficient for the recycle policy.
 
 
+kubectl exec webapp -- cat /log/app.log
 
+# Name: webapp
+# Image Name: kodekloud/event-simulator
+# Volume HostPath: /var/log/webapp
+# Volume Mount: /log
+# Configure a volume to store these logs at /var/log/webapp on the host.
 
+k replace --force -f webapp-pod.yml
 
+k create -f pv-vol.yml
 
+# persistent volume:
+# Volume Name: pv-log
+# Storage: 100Mi
+# Access Modes: ReadWriteMany
+# Host Path: /pv/log
+# Reclaim Policy: Retain
 
+# persistent volume claim:
+# Persistent Volume Claim: claim-log-1
+# Storage Request: 50Mi
+# Access Modes: ReadWriteOnce
+
+ k replace --force -f pv-log-claim.yml 
+
+# Create pod to use the persistent volume claim.
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+# Name: webapp
+# Image Name: kodekloud/event-simulator
+# Volume: PersistentVolumeClaim=claim-log-1
+# Volume Mount: /log
+
+kubectl edit webapp
+# add volume mount: mountPath: /log name: log-volume
+# add volume: name: log-volume hostPath: path: /var/log/webapp 
 
