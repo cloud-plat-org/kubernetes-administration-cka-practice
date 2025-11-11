@@ -287,4 +287,9 @@ k create -f pv-vol.yml
 kubectl edit webapp
 # add volume mount: mountPath: /log name: log-volume
 # add volume: name: log-volume hostPath: path: /var/log/webapp 
+kubectl replace --force -f /log/kubectl-edit-838239eddjid.yaml
+
+
+
+
 
