@@ -21,6 +21,6 @@ spec:
 
   volumes:
     - name: data-volume
-    awsElasticBlockStore:
-      volumeID: <volume-id>
-      fsType: ext4
+      awsElasticBlockStore:
+        volumeID: <volume-id>
+        fsType: ext4

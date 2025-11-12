@@ -4,7 +4,7 @@ metadata:
   name: claim-log-1
 spec:
   accessModes:
-    - ReadWriteOnce # changed from ReadWiteMany
+    - ReadWriteOnce # change to ReadWiteMany for multiple pods to read and write to the same volume
   resources:
     requests:
       storage: 50Mi

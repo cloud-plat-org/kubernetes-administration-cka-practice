@@ -215,11 +215,11 @@ k get pv pv-vol1
 # Every PVC is bound to a Persistent Volume (PV).
 
 # requirments:
-# sufficient capacity
-# access modes
-# storage class
-# volume mode
-# selectors
+# sufficient capacity   *****
+# access modes          *****
+# storage class         ***** 
+# volume mode           ***** 
+# selectors             ***** 
 
 # if there are multiple volumes that meet the requirements,
 # you can still use a selector with labels to choose a specific volume.
@@ -307,6 +307,30 @@ ls -al /var/log/webapp
 
 k get pv 
 # released state.
+
+### Storage Classes ###
+
+# PV to PVC binding # requirments:
+# sufficient capacity   *****
+# access modes          *****
+# storage class         ***** 
+# volume mode           ***** 
+# selectors             ***** 
+
+# When using cloud storage, the storage needs to be created 
+# before the PV can be created.
+## Static Provisioning ##
+
+# This is where storage classes are used to provision the storage.
+
+# see /storage-class/storage-class.sh
+
+
+
+
+
+
+
 
 
 
