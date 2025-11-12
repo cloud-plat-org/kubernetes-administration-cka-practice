@@ -24,26 +24,25 @@ kubectl get pv
 kubectl get pvc
 kubectl get pod
 
-kubectl describe pod random-number-generator
-kubectl describe pvc myclaim
-kubectl describe sc google-storage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# sc-definition.yml: is googe but there are many more:
+# AWSElasticBlockStore
+# AzureFile
+# AzureDisk
+# CephFS
+# Cider
+# FC
+# FlexVolume
+# GCEPersistentDisk
+# Glusterfs
+# iSCSI
+# Quobyte
+# NFS
+# RBD
+# VsphereVolume
+# PortworxVolume
+# ScaleIO
+# stoarageOS
+# Local
 
 
 
