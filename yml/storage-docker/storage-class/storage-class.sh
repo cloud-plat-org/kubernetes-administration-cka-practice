@@ -11,7 +11,8 @@
 
 # When using cloud storage, the storage needs to be created 
 # before the PV can be created.
-## Static Provisioning ##
+
+### Static Provisioning ###
 
 # This is where storage classes are used to provision the storage.
 
