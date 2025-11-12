@@ -1,0 +1,7 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: google-storage   ### name to use in PVC definition ###
+spec:
+  provisioner: kubernetes.io/gce-pd
