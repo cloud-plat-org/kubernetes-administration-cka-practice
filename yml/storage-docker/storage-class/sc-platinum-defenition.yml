@@ -3,7 +3,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: platinum
-spec:
+# spec: No spec: in StorageClass definition
   provisioner: kubernetes.io/gce-pd  # provisioner to use
   parameters:
     type: pd-ssd

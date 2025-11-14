@@ -73,11 +73,16 @@ k describe pvc local-pvc
 # This will delay the binding and provisioning of a 
 # PersistentVolume until a Pod using the PersistentVolumeClaim is created.
 
- k create -f pod.yml 
- k get pod nginx
- k get pvc
+kubectl run nginx --image=nginx --dry-run=client -o yaml > pod.yml
+vim pod.yml # add the volume claim to the pod
+k create -f pod.yml 
+k get pod nginx
+k get pvc
  # BOUND
  
+ k get pv
+ k get pvc
+
 
 
 

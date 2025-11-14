@@ -3,8 +3,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: google-storage   ### name to use in PVC definition ### Exampple: Silver, Gold, Platinum
-spec:
-  provisioner: kubernetes.io/gce-pd  # provisioner to use
-  parameters:
-    type: pd-standard [ pd-standard | pd-ssd ]  # type of disk to use
-    replication-type: none [ none | regional ]  # replication type to use
+
+provisioner: kubernetes.io/gce-pd  # provisioner to use
+parameters:
+  type: pd-standard [ pd-standard | pd-ssd ]  # type of disk to use
+  replication-type: none [ none | regional ]  # replication type to use
