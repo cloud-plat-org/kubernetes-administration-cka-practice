@@ -200,11 +200,149 @@ dig www.google.com
 host www.google.com
 
 
+#### Network Namespaces ####
 
+Namespaces (Network Isolation)
+ps aux # On the container
+ps aux # On the host
 
+# Host
+  # eth0: 192.168.1.0
+  # Routing table:
+  # ARP Table:
 
+# container
+  # veth0: 192.168.1.100
+  # Routing table:
+  # ARP Table:
 
+# Create namespaces
+ip netns add red
+ip netns add blue
 
+# List namespaces
+ip netns
+
+# list interfaces on host
+ip link
+arp
+# how do I see this on the namespace?
+ip netns exec red ip link
+ip -n red link
+ip -n blue link
+
+ip netns exec red arp
+ip netns exec blue arp
+
+ip netns exec red route
+ip netns exec blue route
+
+# how do we connect the namespaces?
+ip link add veth-red type veth peer name veth-blue
+ip link set veth-red netns red
+ip link set veth-blue netns blue
+ip -n red addr add 192.168.15.1 dev veth-red
+ip -n blue addr add 192.168.15.2 dev veth-blue
+ip -n red link set veth-red up
+ip -n red link delete veth-red # When one side is deleted, the other side is deleted.
+ip -n blue link set veth-blue up
+ip -n blue link delete veth-blue # When one side is deleted, the other side is deleted.
+ip netns exec red arp
+# should see the ARP entry for the other namespace
+ip netns exec blue arp
+# should see the ARP entry for the other namespace
+arp 
+# On host, you won't see the arp for the other namespace
+
+ip netns exec red ping 192.168.15.2
+ip netns exec blue ping 192.168.15.1
+
+# Switch is needed for multiple namespaces to communicate with each other.
+# Linux Bridge is a virtual switch that can be used to connect the namespaces.
+# Open vSwitch is a virtual switch that can be used to connect the namespaces.
+
+# to create a switch we need a new interface on the host
+ip link add v-net-0 type bridge
+ip link set v-net-0 up
+ip link
+# this is an internal interface on the host, being used as a switch
+ip addr add 192.168.15.1/24 dev v-net-0
+ip addr show v-net-0
+# now we can connect all the namespaces to the switch
+
+# These are the cables only, we need to connect the namespaces to the switch.
+ip link add veth-red type veth peer name veth-red-br
+ip link set veth-blue type veth peer name veth-blue-br
+#  This connects the one end of the cable to the namespace.
+ip link set veth-red netns red
+ip link set veth-blue netns blue
+# This connects the other end of the cable to the switch.
+ip link set veth-red-br master v-net-0
+ip link set veth-blue-br master v-net-0
+# add IP to the switch
+ip addr add 192.168.15.1/24 dev v-net-0
+ip addr show v-net-0
+# add IP to the namespaces
+ip -n red addr add 192.168.15.1 dev veth-red
+ip -n blue addr add 192.168.15.2 dev veth-blue
+ip -n red addr show veth-red
+ip -n blue addr show veth-blue
+# bring up the cables
+ip link set veth-red-br up
+ip link set veth-blue-br up
+
+# what if I try to reach one of namespace ip's from the host?
+ping 192.168.15.1
+# this will not work because it is on a different network.
+ip add add 192.168.15.5/24 dev v-net-0
+ip addr show v-net-0
+ping 192.168.15.1
+# this will work because it is on the same network.
+# This network is still private on the host, can not reach from the internet.
+ip netns exec blue ping 192.168.1.3 # from namespace blue to outside network
+# this will not work because it is on a different network.
+ip netns exec blue route
+# add a route to the outside network
+ip netns exec blue ip route add 192.168.1.0/24 via 192.168.15.5 veth-blue
+# This connect the namespace to the outside network.
+ping 192.168.1.2 or ping 192.168.1.3
+# this will not work because the ouside network doent know about the namespace network.
+# NAT is needed 
+iptable -t nat PREROUTING -s 192.168.15.0/24 -j MASQUERADE
+# This will masqerade the namespace network to the outside network.
+# This adds the host interal network ip to the packet so outside network knows about the namespace network.
+    # View all NAT table rules
+    iptables -t nat -L -n -v
+    # View only PREROUTING chain
+    iptables -t nat -L PREROUTING -n -v
+    # More detailed with line numbers
+iptables -t nat -L PREROUTING -n -v --line-numbers
+ping 192.168.1.2 or ping 192.168.1.3
+# this will work because the outside network knows about the namespace network.
+
+# next we try to ping the internet from the namespace network
+ip netns exec blue ping 8.8.8.8
+# this will not work because the namespace network is not connected to the internet.
+# we need to add a default gateway to the namespace network.
+ip netns exec blue ip route add default via 192.168.15.5 ???veth-blue???
+# This adds a default gateway to the namespace network.
+ping 8.8.8.8
+# this will work because the namespace network is connected to the internet.
+
+iptables -t nat -A PREROUTING --dport 80 --to-destination 192.168.15.2:80 -j DNAT 
+# This will redirect the traffic to the namespace network.
+
+# FAQ
+# While testing the Network Namespaces, if you come across issues 
+# where you can't ping one namespace from the other, make sure you 
+# set the NETMASK while setting IP Address. ie: 192.168.1.10/24
+
+# ip -n red addr add 192.168.1.10/24 dev veth-red
+
+# Another thing to check is FirewallD/IP Table rules. 
+# Either add rules to IP Tables to allow traffic from one 
+# namespace to another. Or disable IP Tables all together 
+# fd(Only in a learning environment).
 
 
 
