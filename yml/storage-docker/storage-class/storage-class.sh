@@ -83,7 +83,4 @@ k get pvc
  k get pv
  k get pvc
 
-
-
-
-
+Press Ctrl-R then + to past in vim.
