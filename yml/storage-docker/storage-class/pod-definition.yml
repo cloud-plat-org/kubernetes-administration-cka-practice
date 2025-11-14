@@ -12,7 +12,7 @@ spec:
     volumeMounts:
     - mountPath: /opt
       name: data-volume
-    volumes:
-    - name: data-volume
-      persistentVolumeClaim:
-        claimName: myclaim  # name of the PVC to use
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: myclaim  # name of the PVC to use

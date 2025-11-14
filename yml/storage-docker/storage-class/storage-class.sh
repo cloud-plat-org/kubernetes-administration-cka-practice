@@ -44,6 +44,41 @@ kubectl get pod
 # stoarageOS
 # Local
 
+kubectl get storageclass
+kubectl get storageclass --no-headers -o custom-columns=":metadata.name" 
+
+ kubectl get storageclass --no-headers -o custom-columns=":metadata.name"
+# local-path
+# local-storage
+# portworx-io-priority-high
+
+kubectl describe storageclass local-path
+
+kubectl describe storageclass local-storage
+# Provisioner: kubernetes.io/no-provisioner # no provisioner means static provisioning
+kubectl describe storageclass portworx-io-priority-high
+
+kubectl create -f pvc-docs.yml
+kubectl get pvc local-pvc
+
+
+kubectl get pvc local-pvc
+k get volumes
+kubectl get storageclass
+kubectl describe storageclass local-path
+k describe pvc local-pvc
+
+# The Storage Class called local-path makes use of 
+# VolumeBindingMode set to WaitForFirstConsumer. 
+# This will delay the binding and provisioning of a 
+# PersistentVolume until a Pod using the PersistentVolumeClaim is created.
+
+ k create -f pod.yml 
+ k get pod nginx
+ k get pvc
+ # BOUND
+ 
+
 
 
 
