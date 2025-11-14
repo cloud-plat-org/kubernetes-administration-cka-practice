@@ -128,8 +128,78 @@ hostname
 
 # Instead of using /etc/hosts, we can use DNS servers.
 
-
 cat /etc/resolv.conf # this is where DNS servers are configured
+# can have multiple servers, order matters.
+
+# /etc/hosts had precedence over DNS servers.
+cat /etc/nsswitch.conf # this is where the order of name service is configured
+# hosts:          files dns
+# This means that the system will first look in /etc/hosts for the name,
+# and then in the DNS servers.
+ 
+# www.kubernetes.io is a domain name
+# These are the top level domains (TLDs)
+.com (Commercial)
+    www.google.com 
+    www.youtube.com
+.net (Network)
+    www.behance.net
+    www.speedtest.net   
+.edu (Education)
+    www.stanford.edu
+    www.harvard.edu
+.org (Organization)
+    www.wikipedia.org
+    www.wikimedia.org
+.io
+    www.kubernetes.io
+
+# root .
+# .com Is top level domain (TLD)
+# google (is the name assigned to the company Google Inc.)
+# www  is a subdomain of .com ( maps, drives, apps, mail,etc.)
+
+# apps.google.com
+#     ^
+# Org DNS (my company's DNS)
+#     ^
+# Root DNS (.)
+#     ^
+# .com DNS
+#     ^
+# Google DNS
+#     ^
+# 216.58.221.78 # Google's IP address
+# An Organization's DNS server my cache the DNS records for a limited time.
+
+# ORG DNS (my company's DNS)
+# mycompany.com
+# www, mail, hr, pay, drives, etc.
+cat /etc/resolv.conf
+# our internal DNS server is 192.168.1.11
+# With this it is manditory to use the full domain name for internal resources.
+# mail.mycompany.com
+# drives.mycompany.com
+# db.mycompany.com
+# If you use the short name, you will not be able to access the internal resources.
+# if you want to use short names ass a search entry in /etc/hosts or /etc/resolv.conf
+search mycompany.com
+# now if you just type mail, it will be resolved to mail.mycompany.com
+search     mycompany.com     prod.mycompany.com
+# order matters, the first one will be used.
+
+### DSN Record Types ###
+# A record - maps a domain name to an IP address
+# AAAA record - maps a domain name to an IPv6 address
+# CNAME record - maps a domain name to another domain name
+
+sudo apt install bind9-dnsutils -y # for nslookup and dig
+sudo apt install bind9-host -y # for host command
+nslookup www.google.com
+dig www.google.com
+host www.google.com
+
+
 
 
 
