@@ -344,6 +344,11 @@ iptables -t nat -A PREROUTING --dport 80 --to-destination 192.168.15.2:80 -j DNA
 # namespace to another. Or disable IP Tables all together 
 # fd(Only in a learning environment).
 
+### Docker Networking ###
+
+# docker, and eth0 192.16.1.10
+docker run --network none nginx
+# this is the none network, not attached to any network.
 
 
 
