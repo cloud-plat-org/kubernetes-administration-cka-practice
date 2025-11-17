@@ -471,10 +471,87 @@ bridge add <cid> <namespace>
 # CNI is a standard for container networking.
 # CNI plugins are available for different network providers.
 
+# Container Runtime must create network namespace
+# Identify the network the container must attach to.
+# Container Runtime to invoke Network Plugin (bridge) when the container is created.
+# Container Runtime to invoke Network Plugin (bridge) when the container is deleted.
+# JSON format for the network configuration.
+# ----------------------------------
+# ON the plugin side:
+# Must support command line arguments ADD, DEL, CHECK
+# Must support parameters container id, network ns, etc.
+# Must manage IP address assigned to pods
+# Must return results in a specific format
 
+# Standard plugins:
+# BRIDGE
+# VLAN
+# IPVLAN
+# MACVLAN
+# WINDOWS
+    # host-local
+    # DHCP
+# there are other plugins too:
+# flannel
+# cilium
+# NSX
+# calico
+# etc.
+# All of these adhere to the CNI standard.
 
+# Docker:
+# Container Netwwork Model (CNM) simular to CNI but different.
+# The above plugins don't easily work with docker.
+# X docker run --network=cni-bridge nginx, fails because docker doesn't know about the plugin.
+# This is how Kubernetes creates a new container.
+docker run --network=none nginx
+bridge add 3948938 /var/run/docker/netns/3948938
 
+### Networking Cluster Nodes ###
 
+# master-01
+# 192.168.1.10
+# MAC Address: 02:42:ac:11:00:02
+# eth0: 192.168.1.10
+# kube-apiserver port 6443
+# kube-scheduler port 10251 (to kube-api 6443)
+# kube-scheduler port 10259 (for direct access to kube-scheduler)
+# kube-controller-manager port 10252 (to kube-api 6443)
+# kube-controller-manager port 10257 (for direct access to kube-controller-manager)
+# etcd port 2379 (for direct access to etcd)
+# etcd peer communication (between etcd nodes): 2380.​
+# etcd client communication (API server or etcdctl): 2379.​
+# https://kubernetes.io/docs/reference/networking/ports-and-protocols/
+
+# worker-01
+# 192.168.1.11
+# MAC Address: 02:42:ac:11:00:03
+# eth0: 192.168.1.11
+# kubelet (kube-api) port 6443
+# kubelet port 10250, for direct access to kubelet.
+# services ports 30000-32767
+
+# worker-02
+# 192.168.1.12
+# MAC Address: 02:42:ac:11:00:04
+# eth0: 192.168.1.12
+# kubelet (kube-api) port 6443
+# kubelet port 10250, for direct access to kubelet.
+# services ports 30000-32767
+
+# Network:
+# 192.168.1.0
+
+###########  COMMANDS to keep handy for LAB ###########
+ip link
+ip addr add 192.168.1.10/24 dev eth0
+ip addr
+ip route add 192.168.1.0/24 via 192.168.2.1
+ip route
+netstat -plnt
+arp
+route
+cat /proc/sys/net/ipv4/ip_forward
 
 
 
