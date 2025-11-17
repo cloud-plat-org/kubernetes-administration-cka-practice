@@ -553,10 +553,18 @@ arp
 route
 cat /proc/sys/net/ipv4/ip_forward
 
+kubectl get nodes 
+kubectl get nodes -o wide
+ip addresss # look for nic with same IP as -o wide output
 
+ip address show type bridge # look for bridge interface
+# test for bridge interface:
+ip link | grep cni
 
-
-
+controlplane ~ ➜  netstat -a | grep 2379 | wc -l
+# 130
+controlplane ~ ➜  netstat -a | grep 2380 | wc -l
+# 1
 
 
 
