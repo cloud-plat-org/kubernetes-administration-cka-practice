@@ -690,8 +690,17 @@ ip -n <namespace> link show
      # calico
      # NSX
      # cilium
+# configuration files:
+    # /etc/cni/net.d/
+    # bridge.conf
+    # flannel.con
+    # etc.
+ls /opt/cni/bin
+ls /etc/cni/net.d
 
 
+# Weave lab link:
+# kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
 
 
 
