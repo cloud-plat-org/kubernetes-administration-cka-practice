@@ -561,10 +561,23 @@ ip address show type bridge # look for bridge interface
 # test for bridge interface:
 ip link | grep cni
 
-controlplane ~ ➜  netstat -a | grep 2379 | wc -l
+ip route # default gateway
+route 
+
+netstat --help
+netstat -npl | grep -i scheduler
+
+netstat -a | grep 2379 | wc -l
 # 130
-controlplane ~ ➜  netstat -a | grep 2380 | wc -l
+netstat -a | grep 2380 | wc -l
 # 1
+# better way to test:
+netstat -npa | grep -i etcd | grep -i 2379 | wc -l
+netstat -npa | grep -i etcd | grep -i 2380 | wc -l
+
+
+### POD Networking Concepts ###
+
 
 
 
