@@ -391,7 +391,91 @@ docker inspect 4938883
 
 # How does docker connect the container to the bridge?
 # Docker creates a virutual cable with two interfaces on each end.
-# 
+ip link
+# master docker0 veth*, this is the connection to the bridge.
+ip -n 4938883 link
+# eth0@if9
+# This is the connection to the container.
+io -n 4938883 addr show eth0@if9
+# 172.17.0.2/16
+
+ip addr show eth0@if9
+# 172.17.0.2/16
+ip addr show docker0
+# 172.17.0.1/16
+ping 172.17.0.1
+# this will ping the bridge.
+ping 172.17.0.2
+
+# every time a container is created, docker creates a new namespace, two interfaces, 
+# a virutual cable with two interfaces on each end.
+# These interfaces are called veth pairs.
+# Pairs can be idetified by the odd and even numbers. 9 & 10, 11 & 12, etc.
+# The odd number is the connection to the container.
+# The even number is the connection to the bridge.
+docker run nginx
+# 1234567890, Port 80, This can only be accessed from the private network on the host.
+# From within the host:
+# curl 172.17.0.3:80 
+# Welcome to the container.
+# From outside the host:
+curl http://172.17.0.3:80 
+# fails because the container is not accessible from the outside world.
+
+docker run -p 8080:80 nginx
+# 1234567890, Port 80, This can be accessed from the outside world.
+curl http://172.17.0.3:8080 
+# Welcome to the container.
+
+# How does connect port 8080 (external port) to port 80 (internal port)?
+# Docker creates a new iptables rule to redirect the traffic from the external port to the internal port.
+iptables -t nat -A PREROUTING --dport 8080 --to-destination 172.17.0.3:80 -j DNAT
+# This will redirect the traffic from the external port to the internal port.
+# docker does it the same way. It adds the rule to the docker chain.
+# notice that when docker does this it includes the container ip address in the rule.
+iptables -t nat -L -n -v
+# DNAT tcp  -- anywhere anywhere tcp dpt:8080 to:172.17.0.3:80
+
+# CONTAINER NETWORK INTERFACE CNI #
+    ## Network Namespaces
+    # Create network namespace for the container
+    # Create interface for the container
+    # Create virtual cable for the container
+    # Attach the veth to the namespace
+    # Attach the veth to the bridge
+    # Add IP address to the interface
+    # Bring up the interface
+    # Enable NAT-IP MASQUERADE
+
+    ## docker bridge network (Same as Network Namespaces different commands)
+    # Create network namespace
+    # Create bridge network/interface
+    # Creat veth pairs
+    # Attach the veth to the namespace
+    # Attach the veth to the bridge
+    # Assign IP addresses
+    # Bring up the interfaces
+    # Enable NAT-IP MASQUERADE
+
+    # rkt and Meso's also use this method.
+    ## Kubernetes also uses this method.
+
+# Since these are the same, we moved away from this to Bride:
+## Bridge ##
+bridge add <container-id> /var/run/docker/netns/<container-id>
+# the bridge program takes care of the rest of the steps.
+# When rkt or kubernetes creates a new container, it runs the bridge program.
+bridge add <cid> <namespace>
+# What is I wanted to create my own program to create a new container?
+# This is where CNI comes in.
+# CNI is a standard for container networking.
+# CNI plugins are available for different network providers.
+
+
+
+
+
+
 
 
 
