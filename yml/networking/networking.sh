@@ -578,9 +578,118 @@ netstat -npa | grep -i etcd | grep -i 2380 | wc -l
 
 ### POD Networking Concepts ###
 
+# importatant to setup network security groups and firewalls to allow traffice between nodes.
+# Each node has CNI configured.
+# now that we have the network setup on the nodes, 
+# we need to setup the network between the pods.
+
+# Here are the requirements for the network between the pods:
+    # Every pod should have an IP address.
+    # Every pod should be able to communicate with every other pod.
+    # Every pod should be able to communicate with every pod on all other nodes without NAT. 
+    
+# How is this done?
+# flannel, calico, NSX, etc.
+
+# node01
+# 192.168.1.11
+# BRIDGE Network v-net-0 (ip add v-net-0 type bridge)
+# ip link set v-net-0 up
+# ip addr add 10.244.1.0/24 dev v-net-0 (add address to the bridge)
+# bridge v-net-0 ip address 10.244.1.1
+# pod ip address 10.244.1.2, 10.244.1.3, 10.244.1.4, etc.
+
+# node02
+# 192.168.1.12
+# BRIDGE Network v-net-0 (ip add v-net-0 type bridge)
+# ip link set v-net-0 up
+# ip addr add 10.244.2.0/24 dev v-net-0
+# bridge v-net-0 ip address 10.244.2.1
+# pod ip address 10.244.2.2, 10.244.2.3, 10.244.2.4, etc.
+
+# node03
+# 192.168.1.13
+# BRIDGE Network v-net-0
+# ip link set v-net-0 up
+# ip addr add 10.244.3.0/24 dev v-net-0 (add address to the bridge)
+# bridge v-net-0 ip address 10.244.3.1
+# pod ip address 10.244.3.2, 10.244.3.3, 10.244.3.4, etc.
+
+# LAN Network:
+# 192.168.1.0/24
+# Gateway: 192.168.1.1
+# DNS: 192.168.1.1
 
 
+## net-script.sh ##
+# Create veth pair
+ip link add ...
 
+# Attach veth pair
+ip link set ...
+ip link set ...
+# Assign IP address
+ip -n <namespace> addr add ... dev ...
+ip -n <namespace> addr show
+# Bring up the interface
+ip -n <namespace> link set ... up
+ip -n <namespace> link show
+# Enable NAT-IP MASQUERADE
+# iptables -t nat -A PREROUTING --dport ... --to-destination ... -j DNAT
+
+# CONTAINER NETWORKING INTERFACE CNI #
+# gives us standards on how our script should be written.
+# UPDATE script format:
+## net-script.sh ##
+# ADD(create)
+    # Create veth pair
+    ip link add ...
+
+    # Attach veth pair
+    ip link set ...
+    ip link set ...
+    # Assign IP address
+    ip -n <namespace> addr add ... dev ...
+    ip -n <namespace> addr show
+    # Bring up the interface
+    ip -n <namespace> link set ... up
+    ip -n <namespace> link show
+# DEL(delete)
+    # Delete veth pair
+    ip link delete ...
+    ip link delete ...
+    # Delete IP address
+    ip -n <namespace> addr del ... dev ...
+    ip -n <namespace> addr show
+    # Delete the interface
+    ip -n <namespace> link set ... down
+    ip -n <namespace> link show
+# CHECK(check)
+    # Check the veth pair
+    ip link show ...
+    ip link show ...
+    # Check the IP address
+    ip -n <namespace> addr show ...
+    ip -n <namespace> addr show ...
+    # Check the interface
+    ip -n <namespace> link show ...
+    ip -n <namespace> link show ...
+
+### Container Runtime ###
+  -cni-conf-dir=/etc/cni/net.d
+  -cni-bin-dir=/opt/cni/bin
+  ./net-script.sh add <container-id> <namespace>
+
+## CNI in Kubernetes ##
+# container runtimes:
+    # containerd
+    # cri-o
+# cni plugins:
+#  /opt/cni/bin/
+     # flannel
+     # calico
+     # NSX
+     # cilium
 
 
 
