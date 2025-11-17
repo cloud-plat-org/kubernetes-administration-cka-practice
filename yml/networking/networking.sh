@@ -346,9 +346,54 @@ iptables -t nat -A PREROUTING --dport 80 --to-destination 192.168.15.2:80 -j DNA
 
 ### Docker Networking ###
 
-# docker, and eth0 192.16.1.10
+# A host with docker, and eth0 192.16.1.10
 docker run --network none nginx
 # this is the none network, not attached to any network.
+# When a container is created, it has no network access.
+docker run --network host nginx
+# this is the host network, the container is attached to the host network.
+# 192.168.1.10:80 -> 192.168.1.10:80
+# this will only work for one container.
+
+# bridge network #
+docker network ls
+# name: bridge
+ip link
+# docker0
+# it assigns an IP address to the bridge 172.17.0.1/24 
+
+ip link add docker0 type bridge
+
+docker run nginx
+# CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+# 1234567890     nginx     "nginx"   10 seconds ago   Up 8 seconds   0.0.0.0:80->80/tcp   nginx
+
+ip netns
+# 4938883
+
+docker inspect 4938883
+# "NetworkSettings": {
+#     "Networks": {
+#         "bridge": {
+#             "IPAMConfig": null,
+#             "Links": null,
+#             "IPAddress": "172.17.0.2",
+#             "IPPrefixLen": 16,
+#             "Gateway": "172.17.0.1",
+#             "GlobalIPv6Address": "",
+#             "GlobalIPv6PrefixLen": 0,
+#             "MacAddress": "02:42:ac:11:00:02"
+#         }
+#     }
+# }
+
+## Container and network namespace means the same thing.
+
+# How does docker connect the container to the bridge?
+# Docker creates a virutual cable with two interfaces on each end.
+# 
+
+
 
 
 
