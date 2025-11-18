@@ -701,6 +701,61 @@ ls /etc/cni/net.d
 
 # Weave lab link:
 # kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+# weaveworks.com
+
+# A weave agent is a daemon that runs on each node and manages the network.
+# It is responsible for:
+# - Creating the network bridge
+# - Assigning IP addresses to pods
+# - Routing traffic between pods
+# - Managing network policies
+# - Managing network routes
+# - Managing network firewall rules
+# - Managing network NAT rules
+kubectl exec busybox ip route
+# default via 10.244.1.1. dev eth0
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
+kubectl get pods -n kube-system -o wide
+# weave-net-<pod-id> <node-name>
+
+kubectl logs weave-net-<pod-id> weave -n kube-system
+
+######## lab #########
+kubectl get pods -A
+kubectl describe pod kube-flannel-ds-dvv4z -n kube-flannel
+# tried:
+ps -aux | grep kubelet | grep container-runtime
+
+# WORKED:
+cat /var/lib/kubelet/config.yaml
+# containerRuntimeEndpoint: unix:///var/run/containerd/containerd.sock
+
+ls /opt/cni/bin
+ls /etc/cni/net.d/<file-name>.conf
+cat /etc/cni/net.d/10-flannel.conflist
+
+
+
+# IPAM CNI # IP Address Management
+# DHCP and host-local are IPAM plugins.
+cat /etc/cni/net.d/net-scrit.conf
+{
+    "cniVersion": "0.2.0",
+    "name": "mynet",
+    "type": "net-script",
+    "bridge": "cni0",
+    "ipam": {
+        "type": "host-local",
+        "subnet": "10.244.0.0/16",
+        "routes": [
+            { "dst": "0.0.0.0/0" }
+        ]
+    }
+}
+
+
+
 
 
 
