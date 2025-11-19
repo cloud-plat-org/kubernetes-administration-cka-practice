@@ -754,7 +754,21 @@ cat /etc/cni/net.d/net-scrit.conf
     }
 }
 
+k get pods
+k get pod backend -o wide
+# IP  172.17.0.5 
+kubectl exec -it frontend -- curl -m 5  172.17.0.5
 
+k delete namespace kube-flannel
+k delete pod kube-flannel-ds-dvv4z -n kube-flannel
+rm /etc/cni/net.d/10-flannel.conflist 
+rm /opt/cni/bin/flannel
+
+watch kubectl get pods -A
+
+# https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
+
+# https://docs.tigera.io/calico/latest/getting-started/bare-metal/installation/binary-mgr
 
 
 
